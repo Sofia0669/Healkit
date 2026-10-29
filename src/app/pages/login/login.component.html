@@ -1,1 +1,16 @@
-<section class="login-page"><div class="login-brand" aria-label="HealKit Pharmacy: salud más cerca de ti"><img src="assets/login-arte.jpg" alt="HealKit Pharmacy. Salud más cerca de ti"></div><div class="login-right"><div class="login-card"><h1>Bienvenido</h1><h2>Inicia sesión en HealKit</h2><p>Sistema ERP para la gestión de tu farmacia</p><form (ngSubmit)="entrar()"><label class="login-input"><hk-icon name="user"/><input [(ngModel)]="usuario" name="usuario" autocomplete="username" placeholder="Usuario" aria-label="Usuario"></label><label class="login-input"><hk-icon name="lock"/><input [(ngModel)]="contrasena" name="contrasena" [type]="mostrar?'text':'password'" autocomplete="current-password" placeholder="Contraseña" aria-label="Contraseña"><button type="button" class="show-password" aria-label="Mostrar u ocultar contraseña" (click)="mostrar=!mostrar"><hk-icon name="eye"/></button></label><div class="login-options"><label><input type="checkbox" [(ngModel)]="recordar" name="recordar"> Recordar mi usuario</label><span class="forgot" title="No disponible en el prototipo">¿Olvidaste tu contraseña?</span></div><button type="submit" class="submit-login">Iniciar sesión <hk-icon name="arrow"/></button></form><div class="quote">“Tecnología y bienestar<br>para una comunidad más saludable”<div class="quote-rule"></div></div></div></div></section>
+<section class="login-page">
+    <div class="login-brand" aria-label="HealKit Pharmacy: salud más cerca de ti">
+        <img src="assets/login-arte.jpg" alt="HealKit Pharmacy. Salud más cerca de ti">
+    </div>
+    <div class="login-right">
+        <div class="login-card">
+            <h1>Bienvenido</h1>
+            <h2>Inicia sesión en HealKit</h2>
+            <p>Sistema ERP para la gestión de tu farmacia</p>
+            <form (ngSubmit)="entrar()">
+                <label class="login-input">
+                    <hk-icon name="user"/>
+                    <input [(ngModel)]="usuario" name="usuario" autocomplete="username" placeholder="Usuario" aria-label="Usuario">
+                </label>
+                <label class="login-input">
+                    <hk-icon name="lock"/><input [(ngModel)]="contrasena" name="contrasena" [type]="mostrar?'text':'password'" autocomplete="current-password" placeholder="Contraseña" aria-label="Contraseña"><button type="button" class="show-password" aria-label="Mostrar u ocultar contraseña" (click)="mostrar=!mostrar"><hk-icon name="eye"/></button></label><div class="login-options"><label><input type="checkbox" [(ngModel)]="recordar" name="recordar"> Recordar mi usuario</label><span class="forgot" title="No disponible en el prototipo">¿Olvidaste tu contraseña?</span></div><button type="submit" class="submit-login">Iniciar sesión <hk-icon name="arrow"/></button></form><div class="quote">“Tecnología y bienestar<br>para una comunidad más saludable”<div class("quote-rule"></div></div></div></div></section>

@@ -1,1 +1,92 @@
-<section class="inventory-hero"><div class="inventory-icon"><hk-icon name="box"/></div><div><h1>Inventario</h1><p>Control de productos, existencias y vencimientos</p></div></section><div class="inventory-content"><div class="inventory-stats"><div class="inventory-stat hk-card"><span class="hk-circle blue"><hk-icon name="box"/></span><div><strong>320</strong><p>Productos<br>totales</p></div></div><div class="inventory-stat hk-card"><span class="hk-circle red"><hk-icon name="alert"/></span><div><strong>18</strong><p>Stock bajo</p></div></div><div class="inventory-stat hk-card"><span class="hk-circle"><hk-icon name="calendar"/></span><div><strong>12</strong><p>Próximos<br>a vencer</p></div></div><div class="inventory-stat hk-card"><span class="hk-circle red"><hk-icon name="ban"/></span><div><strong>3</strong><p>Productos<br>vencidos</p></div></div></div><div class="inventory-tools"><div class="inventory-search"><hk-icon name="search"/><input [(ngModel)]="search" placeholder="Buscar por nombre, código o categoría..." aria-label="Buscar medicamentos"></div><label class="filter-control"><hk-icon name="filter"/><select [(ngModel)]="filter" aria-label="Filtrar inventario"><option>Todos</option><option>Disponible</option><option>Stock bajo</option><option>Vencido</option></select></label><button class="hk-btn add" (click)="create()"><hk-icon name="plus"/> Nuevo producto</button></div><div class="table-wrap"><table><thead><tr><th>Código</th><th>Producto</th><th>Categoría</th><th>Presentación</th><th>Stock</th><th>Vencimiento</th><th>Estado</th><th class="actions-header">Acciones</th></tr></thead><tbody>@for (p of visible;track p.code){<tr><td>{{p.code}}</td><td>{{p.name}}</td><td>{{p.category}}</td><td>{{p.presentation}}</td><td [class.low]="p.stock<=p.minStock">{{p.stock}}</td><td>{{date(p)}}</td><td><span class="hk-badge" [class]="'hk-badge '+style(p)">{{status(p)}}</span></td><td class="actions"><button type="button" aria-label="Ver producto" (click)="view(p)"><hk-icon name="eye"/></button><button type="button" aria-label="Editar producto" (click)="edit(p)"><hk-icon name="edit"/></button><button type="button" aria-label="Eliminar producto" (click)="remove(p)"><hk-icon name="trash"/></button></td></tr>}@empty{<tr><td colspan="8" class="empty">No hay productos que coincidan con la búsqueda.</td></tr>}</tbody></table></div><p class="demo-note">Datos de ejemplo para la demostración. Los cambios se guardan solo mientras la página permanezca abierta.</p></div>@if(modal){<div class="modal-backdrop" (click)="modal=false"><section class="modal hk-card" (click)="$event.stopPropagation()"><h2>{{editCode?'Editar producto':'Nuevo producto'}}</h2><form (ngSubmit)="save()"><label>Código<input class="hk-field" required name="code" [(ngModel)]="draft.code"></label><label>Nombre<input class="hk-field" required name="name" [(ngModel)]="draft.name"></label><label>Categoría<input class="hk-field" name="category" [(ngModel)]="draft.category"></label><label>Presentación<input class="hk-field" name="presentation" [(ngModel)]="draft.presentation"></label><label>Stock<input class="hk-field" type="number" min="0" name="stock" [(ngModel)]="draft.stock"></label><label>Stock mínimo<input class="hk-field" type="number" min="0" name="minStock" [(ngModel)]="draft.minStock"></label><label>Vencimiento<input class="hk-field" type="date" name="expiry" [(ngModel)]="draft.expiry"></label><div class="modal-actions"><button type="button" class="cancel" (click)="modal=false">Cancelar</button><button class="hk-btn" type="submit">Guardar producto</button></div></form></section></div>}
+<section class="inventory-hero">
+    <div class="inventory-icon"><hk-icon name="box" /></div>
+    <div>
+        <h1>Inventario</h1>
+        <p>Control de productos, existencias y vencimientos</p>
+    </div>
+</section>
+<div class="inventory-content">
+    <div class="inventory-stats">
+        <div class="inventory-stat hk-card"><span class="hk-circle blue"><hk-icon name="box" /></span>
+            <div><strong>320</strong>
+                <p>Productos<br>totales</p>
+            </div>
+        </div>
+        <div class="inventory-stat hk-card"><span class="hk-circle red"><hk-icon name="alert" /></span>
+            <div><strong>18</strong>
+                <p>Stock bajo</p>
+            </div>
+        </div>
+        <div class="inventory-stat hk-card"><span class="hk-circle"><hk-icon name="calendar" /></span>
+            <div><strong>12</strong>
+                <p>Próximos<br>a vencer</p>
+            </div>
+        </div>
+        <div class="inventory-stat hk-card"><span class="hk-circle red"><hk-icon name="ban" /></span>
+            <div><strong>3</strong>
+                <p>Productos<br>vencidos</p>
+            </div>
+        </div>
+    </div>
+    <div class="inventory-tools">
+        <div class="inventory-search"><hk-icon name="search" /><input [(ngModel)]="search"
+                placeholder="Buscar por nombre, código o categoría..." aria-label="Buscar medicamentos"></div><label
+            class="filter-control"><hk-icon name="filter" /><select [(ngModel)]="filter"
+                aria-label="Filtrar inventario">
+                <option>Todos</option>
+                <option>Disponible</option>
+                <option>Stock bajo</option>
+                <option>Vencido</option>
+            </select></label><button class="hk-btn add" (click)="create()"><hk-icon name="plus" /> Nuevo
+            producto</button>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Producto</th>
+                    <th>Categoría</th>
+                    <th>Presentación</th>
+                    <th>Stock</th>
+                    <th>Vencimiento</th>
+                    <th>Estado</th>
+                    <th class="actions-header">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>@for (p of visible;track p.code){<tr>
+                    <td>{{p.code}}</td>
+                    <td>{{p.name}}</td>
+                    <td>{{p.category}}</td>
+                    <td>{{p.presentation}}</td>
+                    <td [class.low]="p.stock<=p.minStock">{{p.stock}}</td>
+                    <td>{{date(p)}}</td>
+                    <td><span class="hk-badge" [class]="'hk-badge '+style(p)">{{status(p)}}</span></td>
+                    <td class="actions"><button type="button" aria-label="Ver producto" (click)="view(p)"><hk-icon
+                                name="eye" /></button><button type="button" aria-label="Editar producto"
+                            (click)="edit(p)"><hk-icon name="edit" /></button><button type="button"
+                            aria-label="Eliminar producto" (click)="remove(p)"><hk-icon name="trash" /></button></td>
+                </tr>}@empty{<tr>
+                    <td colspan="8" class="empty">No hay productos que coincidan con la búsqueda.</td>
+                </tr>}</tbody>
+        </table>
+    </div>
+    <p class="demo-note">Datos de ejemplo para la demostración. Los cambios se guardan solo mientras la página
+        permanezca abierta.</p>
+</div>@if(modal){<div class="modal-backdrop" (click)="modal=false">
+    <section class="modal hk-card" (click)="$event.stopPropagation()">
+        <h2>{{editCode?'Editar producto':'Nuevo producto'}}</h2>
+        <form (ngSubmit)="save()"><label>Código<input class="hk-field" required name="code"
+                    [(ngModel)]="draft.code"></label><label>Nombre<input class="hk-field" required name="name"
+                    [(ngModel)]="draft.name"></label><label>Categoría<input class="hk-field" name="category"
+                    [(ngModel)]="draft.category"></label><label>Presentación<input class="hk-field" name="presentation"
+                    [(ngModel)]="draft.presentation"></label><label>Stock<input class="hk-field" type="number" min="0"
+                    name="stock" [(ngModel)]="draft.stock"></label><label>Stock mínimo<input class="hk-field"
+                    type="number" min="0" name="minStock" [(ngModel)]="draft.minStock"></label><label>Vencimiento<input
+                    class="hk-field" type="date" name="expiry" [(ngModel)]="draft.expiry"></label>
+            <div class="modal-actions"><button type="button" class="cancel"
+                    (click)="modal=false">Cancelar</button><button class="hk-btn" type="submit">Guardar
+                    producto</button></div>
+        </form>
+    </section>
+</div>}

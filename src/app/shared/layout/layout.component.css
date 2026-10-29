@@ -1,1 +1,243 @@
-.app-shell{display:grid;grid-template-columns:242px minmax(0,1fr);min-height:100vh;background:#f1f9ff}.sidebar{background:linear-gradient(160deg,#07385e,#002949 70%,#042f56);color:white;min-height:100vh;display:flex;flex-direction:column;padding:0 14px 24px}.sidebar-logo{height:150px;display:flex;align-items:flex-start;justify-content:center;overflow:hidden}.sidebar-logo img{display:block;width:242px;height:148px;object-fit:cover;object-position:top left;max-width:none}.sidebar-nav{display:flex;flex-direction:column;gap:13px;padding-top:8px}.nav-link{display:flex;align-items:center;gap:18px;padding:16px 20px;min-height:59px;border-radius:31px;color:#fff;font-size:20px}.nav-link .hk-icon{width:27px;height:27px}.nav-link.selected{background:linear-gradient(100deg,#76f3e8,#16cabd);color:#052d52;font-weight:700}.nav-link.upcoming{cursor:default}.nav-link:not(.selected):hover{background:#ffffff13}.sidebar-bottom{margin-top:auto;display:flex;flex-direction:column;gap:14px}.side-rule{margin:0 9px 26px;border-top:1px solid #2f6681}.shell-content{min-width:0}.topbar{height:100px;background:#ffffffee;display:flex;align-items:center;border-bottom:1px solid #d7eaf5;padding:0 36px;gap:45px}.menu-button{border:0;background:none;color:#0082b3}.menu-button .hk-icon{height:30px;width:30px}.top-search{margin:auto;display:flex;align-items:center;gap:14px;color:#5180a8;background:#f0f8fd;border:1px solid #dbeaf4;border-radius:30px;width:min(440px,52%);padding:12px 23px;font-size:18px}.top-right{display:flex;align-items:center;gap:20px}.notification{color:#0581b5;position:relative;padding-right:15px;border-right:1px solid #d4e5f0}.notification>span{position:absolute;top:-4px;right:15px;width:11px;height:11px;background:#fa2050;border-radius:50%;border:2px solid white}.avatar{width:48px;height:48px;display:grid;place-items:center;border-radius:50%;background:#1276c9;color:white;font:22px Georgia}.user-details{display:flex;flex-direction:column;line-height:1.25;white-space:nowrap}.user-details strong{font-size:17px}.user-details small{font-size:16px;color:#3575ad}.shell-page{padding:34px 25px;max-width:1480px;margin:auto}@media(max-width:950px){.app-shell{grid-template-columns:200px minmax(0,1fr)}.sidebar-logo img{width:215px}.nav-link{font-size:16px;padding:12px 14px}.topbar{padding:0 20px;gap:15px}.top-search{width:42%}.shell-page{padding:22px 16px}}@media(max-width:690px){.app-shell{display:block}.sidebar{position:fixed;z-index:20;width:245px;transform:translateX(-100%);transition:transform .2s}.sidebar.mobile-open{transform:translateX(0)}.topbar{height:80px}.top-search{display:none}.user-details{display:none}.top-right{margin-left:auto}.shell-page{padding:18px 12px}}
+.app-shell {
+    display: grid;
+    grid-template-columns: 242px minmax(0, 1fr);
+    min-height: 100vh;
+    background: #f1f9ff
+}
+
+.sidebar {
+    background: linear-gradient(160deg, #07385e, #002949 70%, #042f56);
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 0 14px 24px
+}
+
+.sidebar-logo {
+    height: 150px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow: hidden
+}
+
+.sidebar-logo img {
+    display: block;
+    width: 242px;
+    height: 148px;
+    object-fit: cover;
+    object-position: top left;
+    max-width: none
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    padding-top: 8px
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 16px 20px;
+    min-height: 59px;
+    border-radius: 31px;
+    color: #fff;
+    font-size: 20px
+}
+
+.nav-link .hk-icon {
+    width: 27px;
+    height: 27px
+}
+
+.nav-link.selected {
+    background: linear-gradient(100deg, #76f3e8, #16cabd);
+    color: #052d52;
+    font-weight: 700
+}
+
+.nav-link.upcoming {
+    cursor: default
+}
+
+.nav-link:not(.selected):hover {
+    background: #ffffff13
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px
+}
+
+.side-rule {
+    margin: 0 9px 26px;
+    border-top: 1px solid #2f6681
+}
+
+.shell-content {
+    min-width: 0
+}
+
+.topbar {
+    height: 100px;
+    background: #ffffffee;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #d7eaf5;
+    padding: 0 36px;
+    gap: 45px
+}
+
+.menu-button {
+    border: 0;
+    background: none;
+    color: #0082b3
+}
+
+.menu-button .hk-icon {
+    height: 30px;
+    width: 30px
+}
+
+.top-search {
+    margin: auto;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: #5180a8;
+    background: #f0f8fd;
+    border: 1px solid #dbeaf4;
+    border-radius: 30px;
+    width: min(440px, 52%);
+    padding: 12px 23px;
+    font-size: 18px
+}
+
+.top-right {
+    display: flex;
+    align-items: center;
+    gap: 20px
+}
+
+.notification {
+    color: #0581b5;
+    position: relative;
+    padding-right: 15px;
+    border-right: 1px solid #d4e5f0
+}
+
+.notification>span {
+    position: absolute;
+    top: -4px;
+    right: 15px;
+    width: 11px;
+    height: 11px;
+    background: #fa2050;
+    border-radius: 50%;
+    border: 2px solid white
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #1276c9;
+    color: white;
+    font: 22px Georgia
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+    white-space: nowrap
+}
+
+.user-details strong {
+    font-size: 17px
+}
+
+.user-details small {
+    font-size: 16px;
+    color: #3575ad
+}
+
+.shell-page {
+    padding: 34px 25px;
+    max-width: 1480px;
+    margin: auto
+}
+
+@media(max-width:950px) {
+    .app-shell {
+        grid-template-columns: 200px minmax(0, 1fr)
+    }
+
+    .sidebar-logo img {
+        width: 215px
+    }
+
+    .nav-link {
+        font-size: 16px;
+        padding: 12px 14px
+    }
+
+    .topbar {
+        padding: 0 20px;
+        gap: 15px
+    }
+
+    .top-search {
+        width: 42%
+    }
+
+    .shell-page {
+        padding: 22px 16px
+    }
+}
+
+@media(max-width:690px) {
+    .app-shell {
+        display: block
+    }
+
+    .sidebar {
+        position: fixed;
+        z-index: 20;
+        width: 245px;
+        transform: translateX(-100%);
+        transition: transform .2s
+    }
+
+    .sidebar.mobile-open {
+        transform: translateX(0)
+    }
+
+    .topbar {
+        height: 80px
+    }
+
+    .top-search {
+        display: none
+    }
+
+    .user-details {
+        display: none
+    }
+
+    .top-right {
+        margin-left: auto
+    }
+
+    .shell-page {
+        padding: 18px 12px
+    }
+}
