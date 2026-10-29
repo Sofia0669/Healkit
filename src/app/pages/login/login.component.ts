@@ -1,0 +1,2 @@
+import {Component} from '@angular/core';import {FormsModule} from '@angular/forms';import {Router} from '@angular/router';import {HkIconComponent} from '../../shared/hk-icon/hk-icon.component';
+@Component({selector:'app-login',standalone:true,imports:[FormsModule,HkIconComponent],templateUrl:'./login.component.html',styleUrl:'./login.component.css'})export class LoginComponent{usuario='';contrasena='';recordar=false;mostrar=false;constructor(private router:Router){} entrar(){this.router.navigateByUrl('/inicio')}}
