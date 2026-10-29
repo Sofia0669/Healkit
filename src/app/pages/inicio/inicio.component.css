@@ -158,4 +158,129 @@
         background-size: cover;
         background-position: center
     }
+    
+
+
+
+/* =====================================
+   MISIÓN Y VISIÓN - HEALKIT
+===================================== */
+
+.home-about {
+    margin-top: 36px;
+    padding: 0;
+    background: transparent;
+}
+
+.about-title {
+    text-align: center;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 30px;
+    font-weight: bold;
+    color: #082d60;
+    margin: 0 0 25px;
+}
+
+.about-container {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 25px;
+    align-items: stretch;
+}
+
+.about-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 25px;
+    background: #ffffff;
+    border: 1px solid #d3e8f5;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px #0e507716;
+}
+
+.about-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 16px;
+}
+
+.about-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #d2f7f8;
+    color: #009ab0;
+}
+
+.about-icon .hk-icon {
+    width: 25px;
+    height: 25px;
+}
+
+.about-header h3 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 23px;
+    font-weight: bold;
+    color: #082d60;
+}
+
+.about-card p {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 17px;
+    line-height: 1.65;
+    color: #28699e;
+    text-align: left;
+}
+
+.about-line {
+    width: 60px;
+    height: 3px;
+    flex-shrink: 0;
+    margin-top: auto;
+    position: relative;
+    top: 0;
+    transform: none;
+    background: #13bec5;
+    border-radius: 10px;
+}
+
+/* Espacio entre texto y línea */
+
+.about-card p + .about-line {
+    margin-top: 20px;
+}
+
+/* Pantallas pequeñas */
+
+@media (max-width: 860px) {
+    .about-container {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .about-card {
+        padding: 22px;
+    }
+
+    .about-title {
+        font-size: 27px;
+    }
+
+    .about-header h3 {
+        font-size: 21px;
+    }
+
+    .about-card p {
+        font-size: 16px;
+    }
+}
+
+
 }

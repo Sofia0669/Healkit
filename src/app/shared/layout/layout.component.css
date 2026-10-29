@@ -15,7 +15,7 @@
 }
 
 .sidebar-logo {
-    height: 150px;
+    height: auto;
     display: flex;
     align-items: flex-start;
     justify-content: center;
@@ -25,8 +25,8 @@
 .sidebar-logo img {
     display: block;
     width: 242px;
-    height: 148px;
-    object-fit: cover;
+    height: auto;
+    object-fit: contain;
     object-position: top left;
     max-width: none
 }
@@ -240,4 +240,28 @@
     .shell-page {
         padding: 18px 12px
     }
+
+    img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  
+}
+.banner img {
+  width: 100%;
+  height: clamp(160px, 25vw, 320px);
+  object-fit: cover;
+  object-position: center;
+}
+.home-promo {
+  background-size: cover;
+  background-position: center;
+  min-height: clamp(200px, 30vw, 400px);
+}
+.logo {
+  width: clamp(100px, 15vw, 180px);
+  height: auto;
+}
+h1 { font-size: clamp(1.5rem, 4vw, 2.5rem); }
+.contenedor { padding: clamp(12px, 3vw, 32px); }
 }

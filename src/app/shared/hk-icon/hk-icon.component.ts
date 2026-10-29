@@ -1,6 +1,7 @@
-import {Component,Input} from '@angular/core';
-import {NgSwitch,NgSwitchCase,NgSwitchDefault} from '@angular/common';
-@Component({selector:'hk-icon',standalone:true,imports:[NgSwitch,NgSwitchCase,NgSwitchDefault],template:`<svg class="hk-icon" viewBox="0 0 24 24" aria-hidden="true"><ng-container [ngSwitch]="name">
+import { Component, Input } from '@angular/core';
+import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+@Component({
+    selector: 'hk-icon', standalone: true, imports: [NgSwitch, NgSwitchCase, NgSwitchDefault], template: `<svg class="hk-icon" viewBox="0 0 24 24" aria-hidden="true"><ng-container [ngSwitch]="name">
 <ng-container *ngSwitchCase="'home'"><path d="m3 10 9-7 9 7v10h-6v-7H9v7H3z"/></ng-container>
 <ng-container *ngSwitchCase="'box'"><path d="m3 7 9-4 9 4v10l-9 4-9-4zM3 7l9 5 9-5M12 12v9"/></ng-container>
 <ng-container *ngSwitchCase="'cart'"><circle cx="9" cy="20" r="1"/><circle cx="19" cy="20" r="1"/><path d="M2 3h2l3 13h13l2-9H5"/></ng-container>
@@ -21,6 +22,12 @@ import {NgSwitch,NgSwitchCase,NgSwitchDefault} from '@angular/common';
 <ng-container *ngSwitchCase="'filter'"><path d="M3 4h18l-7 9v7l-4-2v-5z"/></ng-container>
 <ng-container *ngSwitchCase="'lock'"><rect x="5" y="10" width="14" height="12" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></ng-container>
 <ng-container *ngSwitchCase="'arrow'"><path d="M4 12h16m-6-6 6 6-6 6"/></ng-container>
+<ng-container *ngSwitchCase="'target'">
+    <circle cx="12" cy="12" r="9"/>
+    <circle cx="12" cy="12" r="5"/>
+    <circle cx="12" cy="12" r="1"/>
+</ng-container>
 <ng-container *ngSwitchDefault><circle cx="12" cy="12" r="9"/></ng-container>
-</ng-container></svg>` ,styles:[`:host{display:inline-flex;align-items:center;justify-content:center}`]})
-export class HkIconComponent{@Input() name='box'}
+</ng-container></svg>` , styles: [`:host{display:inline-flex;align-items:center;justify-content:center}`]
+})
+export class HkIconComponent { @Input() name = 'box' }
