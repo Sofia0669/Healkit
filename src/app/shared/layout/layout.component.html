@@ -12,10 +12,10 @@
                     <hk-icon name="box"/>
                     <span>Inventario</span>
                 </a>
-                <div class="nav-link upcoming" title="Módulo del compañero">
-                    <hk-icon name="cart"/>
-                    <span>Ventas</span>
-                </div>
+                <a routerLink="/ventas" routerLinkActive="selected" class="nav-link" (click)="menuOpen=false">
+                <hk-icon name="cart"/>
+                <span>Ventas</span>
+                </a>
                 <div class="nav-link upcoming" title="Módulo del compañero">
                     <hk-icon name="users"/>
                     <span>Clientes</span>

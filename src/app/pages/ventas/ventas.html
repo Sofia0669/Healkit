@@ -1,0 +1,115 @@
+<div class="page-container">
+  <!-- Encabezado de la página -->
+  <div class="header-title">
+    <div class="title-icon">🛒</div>
+    <div>
+      <h2>Ventas y facturación</h2>
+      <p>Registra las ventas, genera facturas y gestiona los pagos</p>
+    </div>
+  </div>
+
+  <!-- Contenedor Principal (2 columnas) -->
+  <div class="main-content">
+    
+    <!-- Columna Izquierda: Nueva Venta -->
+    <div class="card left-panel">
+      <h3>Nueva venta</h3>
+      
+      <div class="search-bar">
+        <input type="text" [(ngModel)]="textoBusqueda" placeholder="🔍 Buscar producto por nombre o código...">
+        <button class="btn-primary" (click)="agregarProducto()">🛒 Agregar</button>
+      </div>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Subtotal</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Agregamos let i = index para saber qué fila estamos borrando -->
+          <tr *ngFor="let item of productosCarrito; let i = index">
+            <td>{{ item.nombre }}</td>
+            <td>₡ {{ item.precio | number:'1.0-0' }}</td>
+            <td>
+              <!-- [(ngModel)] enlaza la cantidad para que actualice el cálculo al instante -->
+              <input type="number" class="input-qty" [(ngModel)]="item.cantidad" min="1">
+            </td>
+            <td>₡ {{ (item.precio * item.cantidad) | number:'1.0-0' }}</td>
+            <td>
+              <!-- Evento click para borrar -->
+              <button class="btn-delete" (click)="eliminarProducto(i)">🗑️</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Columna Derecha: Resumen -->
+    <div class="card right-panel">
+      <h3>Resumen de venta</h3>
+      
+      <div class="summary-details">
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span>₡ {{ getSubtotal() | number:'1.0-0' }}</span>
+        </div>
+        <div class="summary-row">
+          <span>Descuento</span>
+          <span>₡ 0</span>
+        </div>
+        <div class="summary-row">
+          <span>Impuesto (13%)</span>
+          <span>₡ {{ getImpuesto() | number:'1.0-0' }}</span>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="summary-row total">
+          <span>Total</span>
+          <span>₡ {{ getTotal() | number:'1.0-0' }}</span>
+        </div>
+      </div>
+
+      <div class="payment-method">
+        <label>Método de pago</label>
+        <select class="custom-select">
+          <option>Efectivo</option>
+          <option>Tarjeta</option>
+          <option>Sinpe Móvil</option>
+        </select>
+      </div>
+
+      <button class="btn-primary btn-block">📄 Generar factura</button>
+    </div>
+  </div>
+
+  <!-- Tarjetas de métricas inferiores -->
+  <div class="stats-container">
+    <div class="stat-card">
+      <div class="stat-icon">💰</div>
+      <div class="stat-info">
+        <p>Ventas del día</p>
+        <h4>₡ 125,600</h4>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📈</div>
+      <div class="stat-info">
+        <p>Ventas del mes</p>
+        <h4>₡ 2,450,300</h4>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🧾</div>
+      <div class="stat-info">
+        <p>Facturas emitidas</p>
+        <h4>48</h4>
+      </div>
+    </div>
+  </div>
+</div>
