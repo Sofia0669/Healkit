@@ -22,12 +22,13 @@ import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 <ng-container *ngSwitchCase="'filter'"><path d="M3 4h18l-7 9v7l-4-2v-5z"/></ng-container>
 <ng-container *ngSwitchCase="'lock'"><rect x="5" y="10" width="14" height="12" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></ng-container>
 <ng-container *ngSwitchCase="'arrow'"><path d="M4 12h16m-6-6 6 6-6 6"/></ng-container>
-<ng-container *ngSwitchCase="'target'">
-    <circle cx="12" cy="12" r="9"/>
-    <circle cx="12" cy="12" r="5"/>
-    <circle cx="12" cy="12" r="1"/>
-</ng-container>
+<ng-container *ngSwitchCase="'truck'"><path d="M2 5h12v12H2zM14 9h4l4 4v4h-8z"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></ng-container>
+<ng-container *ngSwitchCase="'money'"><circle cx="12" cy="12" r="10"/><path d="M12 5v14M15 8c-2-2-6-1-6 2s7 2 7 5-5 4-8 1"/></ng-container>
+<ng-container *ngSwitchCase="'store'"><path d="M3 10h18l-2-7H5zM5 10v11h14V10M9 21v-7h6v7"/></ng-container>
+<ng-container *ngSwitchCase="'chart'"><path d="M3 21h18M5 18v-6h3v6M11 18V5h3v13M17 18V9h3v9"/></ng-container>
+<ng-container *ngSwitchCase="'target'"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></ng-container>
 <ng-container *ngSwitchDefault><circle cx="12" cy="12" r="9"/></ng-container>
 </ng-container></svg>` , styles: [`:host{display:inline-flex;align-items:center;justify-content:center}`]
+
 })
 export class HkIconComponent { @Input() name = 'box' }

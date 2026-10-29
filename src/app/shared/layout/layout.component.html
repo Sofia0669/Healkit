@@ -16,10 +16,10 @@
                 <hk-icon name="cart"/>
                 <span>Ventas</span>
                 </a>
-                <div class="nav-link upcoming" title="Módulo del compañero">
-                    <hk-icon name="users"/>
-                    <span>Clientes</span>
-                </div>
+                <a routerLink="/proveedores" routerLinkActive="selected" class="nav-link" (click)="menuOpen = false">
+                <hk-icon name="truck"></hk-icon>
+                <span>Proveedores</span>
+                </a>
             </nav>
             <div class="sidebar-bottom">
                 <div class="side-rule"></div>

@@ -1,0 +1,118 @@
+<div class="prov-page">
+  <!-- Banner con ilustraciones tomadas de la referencia aprobada -->
+  <section class="prov-hero">
+    <div class="prov-hero-icon">
+      <img src="assets/proveedores-camion.jpg" alt="Camión de suministros" />
+    </div>
+    <div class="prov-hero-copy">
+      <h1>Cadena de suministros y proveedores</h1>
+      <p>Gestiona proveedores, órdenes de compra y recepción de mercadería</p>
+    </div>
+    <img class="prov-hero-art" src="assets/proveedores-productos.jpg" alt="Productos farmacéuticos" />
+  </section>
+
+  <section class="prov-stats" aria-label="Indicadores de proveedores">
+    <div class="prov-stat hk-card">
+      <div class="prov-stat-icon"><hk-icon name="users" /></div>
+      <div><strong>24</strong><span>Proveedores<br />activos</span></div>
+    </div>
+    <div class="prov-stat hk-card">
+      <div class="prov-stat-icon"><hk-icon name="calendar" /></div>
+      <div><strong>8</strong><span>Órdenes<br />pendientes</span></div>
+    </div>
+    <div class="prov-stat hk-card">
+      <div class="prov-stat-icon"><hk-icon name="box" /></div>
+      <div><strong>3</strong><span>Pedidos en<br />recepción</span></div>
+    </div>
+    <div class="prov-stat hk-card">
+      <div class="prov-stat-icon"><hk-icon name="money" /></div>
+      <div><strong>€ 2.450.300</strong><span>Compras del mes</span></div>
+    </div>
+  </section>
+
+  <div class="prov-tools">
+    <label class="prov-search">
+      <hk-icon name="search" />
+      <input [(ngModel)]="busqueda" placeholder="Buscar proveedor, orden o factura..." aria-label="Buscar proveedor u orden" />
+    </label>
+    <div class="prov-filter-wrap">
+      <button type="button" class="prov-filter" (click)="mostrarFiltros = !mostrarFiltros">
+        <hk-icon name="filter" /> Filtrar
+      </button>
+      @if (mostrarFiltros) {
+        <label class="prov-filter-popup">Estado de la orden
+          <select [(ngModel)]="filtro" (change)="mostrarFiltros = false">
+            <option value="Todos">Todos</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="En tránsito">En tránsito</option>
+            <option value="Recibida">Recibida</option>
+          </select>
+        </label>
+      }
+    </div>
+    <button type="button" class="prov-primary" (click)="nuevaOrden()">
+      <hk-icon name="plus" /> Nueva orden de compra
+    </button>
+  </div>
+
+  <div class="prov-table-wrapper">
+    <table class="prov-table">
+      <thead><tr><th>Orden</th><th>Proveedor</th><th>Fecha</th><th>Entrega prevista</th><th>Total</th><th>Estado</th><th>Acciones</th></tr></thead>
+      <tbody>
+        @for (orden of ordenesFiltradas; track orden.codigo) {
+          <tr>
+            <td>{{ orden.codigo }}</td>
+            <td>{{ orden.proveedor }}</td>
+            <td>{{ fechaBonita(orden.fecha) }}</td>
+            <td>{{ fechaBonita(orden.entrega) }}</td>
+            <td>{{ dinero(orden.total) }}</td>
+            <td>
+              <span class="prov-status" [class.pendiente]="orden.estado === 'Pendiente'"
+                [class.transito]="orden.estado === 'En tránsito'"
+                [class.recibida]="orden.estado === 'Recibida'">
+                <span class="prov-status-dot"></span>{{ orden.estado }}
+              </span>
+            </td>
+            <td><div class="prov-actions">
+              <button type="button" [attr.aria-label]="'Ver ' + orden.codigo" (click)="verOrden(orden)"><hk-icon name="eye" /></button>
+              <button type="button" [attr.aria-label]="'Editar ' + orden.codigo" (click)="editarOrden(orden)"><hk-icon name="edit" /></button>
+            </div></td>
+          </tr>
+        } @empty { <tr><td colspan="7" class="prov-empty">No se encontraron órdenes.</td></tr> }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="prov-bottom">
+    <button type="button" class="prov-bottom-card hk-card" (click)="verProveedores()">
+      <span class="prov-stat-icon"><hk-icon name="store" /></span>
+      <span class="prov-bottom-content"><strong>Proveedores recientes</strong><span>Distribuidora Médica CR</span><small>Hace 2 días</small></span>
+      <hk-icon name="arrow" />
+    </button>
+    <button type="button" class="prov-bottom-card hk-card" (click)="verReportes()">
+      <span class="prov-stat-icon"><hk-icon name="chart" /></span>
+      <span class="prov-bottom-content"><strong>Historial de precios y entregas</strong><span class="prov-link">Consultar reportes</span></span>
+      <hk-icon name="arrow" />
+    </button>
+  </div>
+</div>
+
+@if (modal) {
+  <div class="prov-modal-bg" (click)="modal = false">
+    <section class="prov-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="prov-modal-title">
+      <h2 id="prov-modal-title">{{ editando ? 'Editar orden de compra' : 'Nueva orden de compra' }}</h2>
+      <form (ngSubmit)="guardarOrden()">
+        <label>Número de orden<input name="codigo" [(ngModel)]="draft.codigo" required /></label>
+        <label>Proveedor<input name="proveedor" [(ngModel)]="draft.proveedor" required /></label>
+        <label>Fecha de compra<input type="date" name="fecha" [(ngModel)]="draft.fecha" required /></label>
+        <label>Entrega prevista<input type="date" name="entrega" [(ngModel)]="draft.entrega" required /></label>
+        <label>Total (€)<input type="number" name="total" min="0" [(ngModel)]="draft.total" required /></label>
+        <label>Estado<select name="estado" [(ngModel)]="draft.estado"><option>Pendiente</option><option>En tránsito</option><option>Recibida</option></select></label>
+        <div class="prov-modal-buttons">
+          <button type="button" class="prov-cancel" (click)="modal = false">Cancelar</button>
+          <button type="submit" class="prov-primary">Guardar orden</button>
+        </div>
+      </form>
+    </section>
+  </div>
+}
