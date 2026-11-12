@@ -1,0 +1,24 @@
+<section class="module-heading">
+  <span class="dashboard-icon" aria-hidden="true">
+    ▥
+  </span>
+  <div class="heading-copy">
+    <h1>Dashboard gerencial</h1>
+    <p>Informe elaborado en Power BI · HealKit Pharmacy</p>
+  </div>
+</section>
+<section class="panel powerbi-panel">
+  @if(reportUrl) {
+  <iframe [src]="reportUrl" title="Dashboard de HealKit en Power BI" allowfullscreen loading="lazy"></iframe>
+  } @else {
+  <div class="powerbi-empty">
+    <h2>Espacio reservado para Power BI</h2>
+    <p>Cuando tengas el informe, configura su URL autorizada en
+      <code>src/app/modules/dashboard/power-bi.config.ts</code>.
+    </p>
+    <p>El archivo <code>.pbix</code> se guarda en la carpeta
+      <code>power-bi/</code> del repositorio.
+    </p>
+  </div>
+  }
+</section>

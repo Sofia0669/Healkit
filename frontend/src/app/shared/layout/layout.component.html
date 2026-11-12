@@ -1,0 +1,25 @@
+<div class="app-shell">
+  <aside class="sidebar" [class.sidebar-open]="menuAbierto">
+    <img class="brand-logo" src="/assets/logo-menu.jpg" alt="HealKit Pharmacy"/>
+    <nav class="nav">
+      @for (item of menu; track item.url) {
+        <a class="nav-item" [routerLink]="item.url" routerLinkActive="active" (click)="menuAbierto=false">
+          <hk-icon [name]="item.icon"/><span>{{item.label}}</span>
+        </a>
+      }
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-rule"></div>
+      <div class="nav-item passive"><hk-icon name="user"/><span>Perfil</span></div>
+      <a class="nav-item" routerLink="/login"><hk-icon name="logout"/><span>Cerrar sesión</span></a>
+    </div>
+  </aside>
+  <div class="app-body">
+    <header class="topbar">
+      <button class="hamburger" aria-label="Abrir menú" (click)="menuAbierto=!menuAbierto"><hk-icon name="menu"/></button>
+      <div class="top-search"><hk-icon name="search"/><span>Buscar en HealKit...</span></div>
+      <div class="user-bar"><hk-icon name="bell"/><div class="avatar">AS</div><div class="user-label"><strong>Angie Solano</strong><small>Administradora</small></div></div>
+    </header>
+    <main class="main-content"><router-outlet/></main>
+  </div>
+</div>

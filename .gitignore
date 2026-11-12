@@ -33,3 +33,11 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Respaldos locales
+/frontend-respaldo/
+/frontend/.git-respaldo/
+
+
+# Variables privadas
+.env.*
+!.env.example

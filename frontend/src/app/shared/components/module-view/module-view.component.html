@@ -1,0 +1,47 @@
+<section class="module-heading" [class.module-hero]="!!config.banner" [style.--banner-image]="config.banner ? 'url(/assets/'+config.banner+')' : 'none'">
+  <span class="heading-icon"><hk-icon [name]="config.icon"/></span>
+  <div class="heading-copy"><h1>{{config.title}}</h1><p>{{config.subtitle}}</p></div>
+</section>
+<section class="stats" [class.stats-three]="config.stats.length===3" [class.stats-four]="config.stats.length===4">
+  @for (stat of config.stats; track stat.label) {
+    <div class="stat-card"><span class="stat-icon"><hk-icon [name]="stat.icon"/></span><div><span class="stat-label">{{stat.label}}</span><strong>{{stat.value}}</strong></div></div>
+  }
+</section>
+<div class="tools-row">
+  <label class="search-field"><hk-icon name="search"/><input [(ngModel)]="query" [placeholder]="config.search" [attr.aria-label]="config.search"/></label>
+  @if(config.statusIndex!==undefined) {
+    <div class="filter-wrap"><button class="btn btn-outline" (click)="mostrarFiltro=!mostrarFiltro"><hk-icon name="filter"/> Filtrar</button>
+      @if(mostrarFiltro){<select [(ngModel)]="filtro" aria-label="Estado"><option>Todos</option>@for(e of estados;track e){<option>{{e}}</option>}</select>}
+    </div>
+  }
+  <button class="btn btn-primary" (click)="abrirNuevo()"><hk-icon name="plus"/>{{config.button}}</button>
+</div>
+@if(config.key==='contabilidad') {
+  <div class="finance-layout">
+    <div class="panel finance-chart"><h2>Resumen financiero</h2><div class="short-line left"></div><div class="chart-key"><span>■ Ingresos</span><span>■ Egresos</span></div>
+    <div class="bar-chart">@for(m of ['May','Jun','Jul','Ago','Sep','Oct'];track m;let i=$index){<div class="bar-group"><div class="bars"><i [style.height.%]="50+i*8"></i><b [style.height.%]="22+i*2"></b></div><small>{{m}}</small></div>}</div></div>
+    <div class="panel recent"><h2>Movimientos recientes</h2><div class="short-line left"></div><ng-container [ngTemplateOutlet]="dataTable"/></div>
+  </div>
+} @else if(config.key==='ventas') {
+  <div class="sales-layout"><div class="panel"><ng-container [ngTemplateOutlet]="dataTable"/></div><div class="panel total-panel">
+    <div><span>Subtotal</span><strong>{{dinero(totalVenta)}}</strong></div><div><span>Impuesto (13%)</span><strong>{{dinero(iva)}}</strong></div>
+    <div class="total-emphasis"><strong>Total</strong><strong>{{dinero(totalVenta+iva)}}</strong></div>
+    <label>Método de pago<select><option>Tarjeta</option><option>Efectivo</option><option>SINPE Móvil</option></select></label>
+    <button class="btn btn-primary wide" (click)="aviso='Factura simulada: no se emitió un comprobante fiscal.'"><hk-icon name="receipt"/> Generar factura</button>
+  </div></div>
+} @else {
+  <div class="panel table-panel"><ng-container [ngTemplateOutlet]="dataTable"/></div>
+}
+@if(config.footers?.length){<div class="footer-tiles">@for(tile of config.footers;track tile.title){<article class="panel footer-tile"><span class="stat-icon"><hk-icon [name]="tile.icon"/></span><div><h3>{{tile.title}}</h3><p>{{tile.detail}}</p></div></article>}</div>}
+@if(aviso){<div class="notice" role="status">{{aviso}} <button (click)="aviso=''" aria-label="Cerrar mensaje">×</button></div>}
+
+<ng-template #dataTable>
+  <div class="table-scroll"><table><thead><tr>@for(col of config.columns;track col){<th>{{col}}</th>}<th>Acciones</th></tr></thead>
+    <tbody>@for(item of rowsFiltradas;track item.index){<tr>@for(value of item.row;track $index;let i=$index){<td>@if(i===config.statusIndex){<span class="status" [ngClass]="claseEstado(value)">{{value}}</span>}@else { {{ value }} }</td>}
+      <td class="row-actions"><button title="Ver" aria-label="Ver" (click)="ver(item.row)"><hk-icon name="eye"/></button><button title="Editar" aria-label="Editar" (click)="editar(item.index)"><hk-icon name="edit"/></button></td>
+    </tr>} @empty {<tr><td [attr.colspan]="config.columns.length+1" class="no-data">No se encontraron registros.</td></tr>}</tbody></table></div>
+</ng-template>
+@if(modal){<div class="modal-backdrop" (click)="modal=false"><section class="modal" (click)="$event.stopPropagation()"><h2>{{editingIndex===null?config.button:'Editar registro'}}</h2><form (ngSubmit)="guardar()">
+  @for(col of config.columns;track col;let i=$index){<label>{{col}}<input [(ngModel)]="formulario[i]" [name]="'field'+i" [required]="i===0"/></label>}
+  <div class="modal-actions"><button class="btn btn-outline" type="button" (click)="modal=false">Cancelar</button><button class="btn btn-primary" type="submit">Guardar</button></div>
+</form></section></div>}

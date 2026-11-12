@@ -1,0 +1,18 @@
+<section class="login-layout">
+  <div class="login-art" role="img" aria-label="HealKit Pharmacy: Salud más cerca de ti"></div>
+  <div class="login-side">
+    <div class="login-card">
+      <h1>Bienvenido</h1>
+      <h2>Inicia sesión en HealKit</h2>
+      <p class="muted">Sistema ERP para la gestión de tu farmacia</p>
+      <form (ngSubmit)="entrar()" class="login-form">
+        <label class="field-icon"><hk-icon name="user"/><input name="usuario" [(ngModel)]="usuario" placeholder="Usuario" autocomplete="username" aria-label="Usuario"/></label>
+        <label class="field-icon"><hk-icon name="lock"/><input name="clave" [(ngModel)]="clave" [type]="mostrarClave?'text':'password'" placeholder="Contraseña" autocomplete="current-password" aria-label="Contraseña"/><button type="button" class="plain-icon" (click)="mostrarClave=!mostrarClave" aria-label="Mostrar contraseña"><hk-icon name="eye"/></button></label>
+        <div class="login-options"><label><input type="checkbox" [(ngModel)]="recordar" name="recordar"/> Recordar mi usuario</label><span>¿Olvidaste tu contraseña?</span></div>
+        <button class="btn btn-primary login-btn" type="submit">Iniciar sesión</button>
+      </form>
+      <p class="login-quote">“Tecnología y bienestar<br/> para una comunidad más saludable”</p>
+      <div class="short-line"></div>
+    </div>
+  </div>
+</section>
