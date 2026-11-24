@@ -1,39 +1,95 @@
-import * as servicio from './inventario.service.js';
 
-const manejar = (fn) => async (req,res,next) => {
-  try { await fn(req,res); } catch (error) {
-    if (error.message.startsWith('Datos inválidos') || error.message.startsWith('Código y nombre') || error.message.startsWith('Stock y stock') || error.message.startsWith('Vencimiento debe')) {
-      return res.status(400).json({ error: error.message });
-    }
+import * as service from './inventario.service.js';
+
+export async function listar(req, res, next) {
+  try {
+    const productos = await service.listar();
+    res.json(productos);
+  } catch (error) {
     next(error);
   }
-};
-
-function idValido(req,res) {
-  const id = Number(req.params.id);
-  if (!Number.isSafeInteger(id) || id < 1) { res.status(400).json({error:'ID inválido'}); return null; }
-  return id;
 }
 
-export const listar = manejar(async (_req,res) => res.json(await servicio.listar()));
-export const obtener = manejar(async (req,res) => {
-  const id=idValido(req,res); if (id===null) return;
-  const p=await servicio.buscar(id);
-  if (!p) return res.status(404).json({error:'Producto no encontrado'});
-  res.json(p);
-});
-export const crear = manejar(async (req,res) => {
-  res.status(201).json(await servicio.crear(req.body));
-});
-export const actualizar = manejar(async (req,res) => {
-  const id=idValido(req,res); if (id===null) return;
-  const p=await servicio.actualizar(id,req.body);
-  if (!p) return res.status(404).json({error:'Producto no encontrado'});
-  res.json(p);
-});
-export const eliminar = manejar(async (req,res) => {
-  const id=idValido(req,res); if (id===null) return;
-  const ok=await servicio.eliminar(id);
-  if (!ok) return res.status(404).json({error:'Producto no encontrado'});
-  res.status(204).end();
-});
+export async function obtener(req, res, next) {
+  try {
+    const producto = await service.buscar(Number(req.params.id));
+
+    if (!producto) {
+      return res.status(404).json({
+        mensaje: 'Producto no encontrado'
+      });
+    }
+
+    res.json(producto);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function crear(req, res, next) {
+  try {
+    const producto = await service.crear(req.body);
+    res.status(201).json(producto);
+  } catch (error) {
+    responderError(error, res, next);
+  }
+}
+
+export async function actualizar(req, res, next) {
+  try {
+    const producto = await service.actualizar(
+      Number(req.params.id),
+      req.body
+    );
+
+    if (!producto) {
+      return res.status(404).json({
+        mensaje: 'Producto no encontrado'
+      });
+    }
+
+    res.json(producto);
+  } catch (error) {
+    responderError(error, res, next);
+  }
+}
+
+export async function eliminar(req, res, next) {
+  try {
+    const eliminado = await service.eliminar(
+      Number(req.params.id)
+    );
+
+    if (!eliminado) {
+      return res.status(404).json({
+        mensaje: 'Producto no encontrado'
+      });
+    }
+
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+}
+
+function responderError(error, res, next) {
+  if (error.code === 'ER_DUP_ENTRY') {
+    return res.status(409).json({
+      mensaje: 'El código del producto ya existe'
+    });
+  }
+
+  if (error.code === 'ER_NO_REFERENCED_ROW_2') {
+    return res.status(400).json({
+      mensaje: 'La categoría o proveedor no existe'
+    });
+  }
+
+  if (!error.code && error.message) {
+    return res.status(400).json({
+      mensaje: error.message
+    });
+  }
+
+  next(error);
+}

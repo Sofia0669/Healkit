@@ -1,0 +1,66 @@
+
+### HEALKIT - GESTIÓN DE USUARIOS
+
+@api = http://localhost:3000/api
+
+
+### 1. LOGIN DEL ADMINISTRADOR
+# @name loginAdmin
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{
+  "correo": "adminGeneral@gmail.com",
+  "clave": "ClaveSegura2026!"
+}
+
+
+### 2. CONSULTAR ROLES DISPONIBLES
+GET {{api}}/usuarios/roles
+Authorization: Bearer {{loginAdmin.response.body.token}}
+
+
+### 3. CONSULTAR TODOS LOS USUARIOS
+GET {{api}}/usuarios
+Authorization: Bearer {{loginAdmin.response.body.token}}
+
+
+### 4. REGISTRAR UN EMPLEADO
+# @name nuevoEmpleado
+POST {{api}}/usuarios
+Authorization: Bearer {{loginAdmin.response.body.token}}
+Content-Type: application/json
+
+{
+  "nombre": "Empleado de Prueba",
+  "correo": "empleado.nuevo@healkit.test",
+  "clave": "ClaveTemporalSegura2026!",
+  "idRol": 2
+}
+
+
+### 5. CAMBIAR EL ROL DEL USUARIO
+### Sustituye el ID por el devuelto al registrarlo
+PATCH {{api}}/usuarios/3/rol
+Authorization: Bearer {{loginAdmin.response.body.token}}
+Content-Type: application/json
+
+{
+  "idRol": 1
+}
+
+
+### 6. DESACTIVAR UN USUARIO
+### Sustituye el ID por el del empleado de prueba
+PATCH {{api}}/usuarios/3/estado
+Authorization: Bearer {{loginAdmin.response.body.token}}
+Content-Type: application/json
+
+{
+  "activo": false
+}
+
+
+### 7. COMPROBAR ACCESO SIN JWT
+GET {{api}}/usuarios
+

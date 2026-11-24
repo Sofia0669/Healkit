@@ -1,0 +1,176 @@
+
+### HEALKIT PHARMACY
+### PRUEBAS HTTP - MODULO INVENTARIO
+### Backend: Node.js + Express
+### Base de datos: MySQL
+
+@baseUrl = http://localhost:3000/api/inventario
+
+
+### 1. VERIFICAR QUE EL SERVIDOR FUNCIONA
+### Respuesta esperada: 200 OK
+
+GET http://localhost:3000/api/health
+Accept: application/json
+
+
+### 2. LISTAR TODOS LOS PRODUCTOS
+### Respuesta esperada: 200 OK
+### Devuelve productos activos almacenados en MySQL
+
+GET {{baseUrl}}
+Accept: application/json
+
+
+### 3. BUSCAR UN PRODUCTO POR ID
+### Respuesta esperada: 200 OK
+### Cambiar el ID 1 por uno existente
+
+GET {{baseUrl}}/1
+Accept: application/json
+
+
+### 4. REGISTRAR UN PRODUCTO
+### Respuesta esperada: 201 Created
+### El codigo debe ser unico
+
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "codigo": "MED101",
+  "nombre": "Panadol 500 mg",
+  "descripcion": "Caja de 20 tabletas",
+  "idCategoria": null,
+  "idProveedor": null,
+  "precioCompra": 800,
+  "precioVenta": 1500,
+  "stock": 50,
+  "stockMinimo": 10,
+  "requiereReceta": false
+}
+
+
+### 5. ACTUALIZAR UN PRODUCTO
+### Respuesta esperada: 200 OK
+### Cambiar el ID por el devuelto en el POST
+
+PUT {{baseUrl}}/1
+Content-Type: application/json
+
+{
+  "codigo": "MED102",
+  "nombre": "Paracetamol 500 mg actualizado",
+  "descripcion": "Caja de 20 tabletas",
+  "idCategoria": null,
+  "idProveedor": null,
+  "precioCompra": 900,
+  "precioVenta": 1600,
+  "stock": 40,
+  "stockMinimo": 10,
+  "requiereReceta": false
+}
+
+
+### 6. ELIMINAR LOGICAMENTE UN PRODUCTO
+### Respuesta esperada: 204 No Content
+### No borra el registro fisico de MySQL
+
+DELETE {{baseUrl}}/1
+Accept: application/json
+
+
+### 7. VERIFICAR QUE EL PRODUCTO FUE DESACTIVADO
+### Respuesta esperada: 404 Not Found
+
+GET {{baseUrl}}/1
+Accept: application/json
+
+
+### 8. PROBAR CODIGO DUPLICADO
+### Respuesta esperada: 409 Conflict
+### Ejecutar despues de registrar MED100
+### y antes de eliminarlo
+
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "codigo": "MED100",
+  "nombre": "Otro medicamento",
+  "descripcion": "Prueba de codigo duplicado",
+  "idCategoria": null,
+  "idProveedor": null,
+  "precioCompra": 500,
+  "precioVenta": 1000,
+  "stock": 20,
+  "stockMinimo": 5,
+  "requiereReceta": false
+}
+
+
+### 9. PROBAR PRODUCTO SIN NOMBRE
+### Respuesta esperada: 400 Bad Request
+
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "codigo": "MED200",
+  "nombre": "",
+  "descripcion": "Producto sin nombre",
+  "idCategoria": null,
+  "idProveedor": null,
+  "precioCompra": 500,
+  "precioVenta": 1000,
+  "stock": 10,
+  "stockMinimo": 5,
+  "requiereReceta": false
+}
+
+
+### 10. PROBAR STOCK NEGATIVO
+### Respuesta esperada: 400 Bad Request
+
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "codigo": "MED201",
+  "nombre": "Producto de prueba",
+  "descripcion": "Stock invalido",
+  "idCategoria": null,
+  "idProveedor": null,
+  "precioCompra": 500,
+  "precioVenta": 1000,
+  "stock": -10,
+  "stockMinimo": 5,
+  "requiereReceta": false
+}
+
+
+### 11. PROBAR PRECIO NEGATIVO
+### Respuesta esperada: 400 Bad Request
+
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "codigo": "MED202",
+  "nombre": "Producto de prueba",
+  "descripcion": "Precio invalido",
+  "idCategoria": null,
+  "idProveedor": null,
+  "precioCompra": 500,
+  "precioVenta": -1000,
+  "stock": 10,
+  "stockMinimo": 5,
+  "requiereReceta": false
+}
+
+
+### 12. BUSCAR UN PRODUCTO INEXISTENTE
+### Respuesta esperada: 404 Not Found
+
+GET {{baseUrl}}/999999
+Accept: application/json

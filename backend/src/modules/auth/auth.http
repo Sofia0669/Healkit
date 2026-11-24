@@ -1,0 +1,71 @@
+
+### HEALKIT - AUTENTICACION JWT
+
+@baseUrl = http://localhost:3000/api
+
+### HEALKIT - LOGIN JWT
+
+
+### 2. INICIAR SESION
+### Respuesta esperada: 200 OK
+### Devuelve token JWT
+# @name login
+
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "correo": "adminGeneral@gmail.com",
+  "clave": "ClaveSegura2026!"
+}
+
+
+### 3. CONSULTAR PERFIL
+### Respuesta esperada: 200 OK
+
+GET {{baseUrl}}/perfil
+Authorization: Bearer {{login.response.body.token}}
+
+
+### 4. CONSULTAR INVENTARIO CON JWT
+### Respuesta esperada: 200 OK
+
+GET http://localhost:3000/api/inventario
+Authorization: Bearer {{login.response.body.token}}
+
+
+### 5. PROBAR CORREO DUPLICADO
+### Respuesta esperada: 409 Conflict
+
+POST {{baseUrl}}/registro
+Content-Type: application/json
+
+{
+  "nombre": "Otro Usuario",
+  "correo": "usuario.prueba@healkit.test",
+  "clave": "OtraClaveTemporal2026!"
+}
+
+
+### 6. PROBAR REGISTRO SIN CONTRASENA
+### Respuesta esperada: 400 Bad Request
+
+POST {{baseUrl}}/registro
+Content-Type: application/json
+
+{
+  "nombre": "Usuario Incompleto",
+  "correo": "incompleto@healkit.test"
+}
+
+
+### 7. PROBAR LOGIN INCORRECTO
+### Respuesta esperada: 401 Unauthorized
+
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "correo": "usuario.prueba@healkit.test",
+  "clave": "ClaveIncorrecta2026!"
+}

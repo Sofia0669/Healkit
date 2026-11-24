@@ -1,6 +1,6 @@
 <div class="app-shell">
   <aside class="sidebar" [class.sidebar-open]="menuAbierto">
-    <img class="brand-logo" src="/assets/logo-menu.jpg" alt="HealKit Pharmacy"/>
+    <img class="brand-logo" src="/assets/logo-menu.png" alt="HealKit Pharmacy"/>
     <nav class="nav">
       @for (item of menu; track item.url) {
         <a class="nav-item" [routerLink]="item.url" routerLinkActive="active" (click)="menuAbierto=false">
