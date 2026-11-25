@@ -1,3 +1,4 @@
+
 <div class="app-shell">
   <aside class="sidebar" [class.sidebar-open]="menuAbierto">
     <img class="brand-logo" src="/assets/logo-menu.png" alt="HealKit Pharmacy"/>
@@ -11,7 +12,7 @@
     <div class="sidebar-bottom">
       <div class="sidebar-rule"></div>
       <div class="nav-item passive"><hk-icon name="user"/><span>Perfil</span></div>
-      <a class="nav-item" routerLink="/login"><hk-icon name="logout"/><span>Cerrar sesión</span></a>
+      <a class="nav-item" routerLink="/login" (click)="cerrarSesion()"> <hk-icon name="logout"/><span>Cerrar sesión</span></a>
     </div>
   </aside>
   <div class="app-body">

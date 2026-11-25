@@ -1,0 +1,392 @@
+
+<div class="usuarios-page">
+PRUEBA: MÓDULO DE USUARIOS
+  <!-- ENCABEZADO -->
+  <header class="usuarios-header">
+    <div>
+      <h1>Gestión de usuarios</h1>
+      <p>
+        Administra las cuentas y los roles
+        de HealKit Pharmacy.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="nuevoUsuario()">
+      + Nuevo usuario
+    </button>
+  </header>
+
+  <!-- RESUMEN -->
+  <section class="resumen-grid">
+
+    <article class="resumen-card">
+      <div class="resumen-titulo">
+        Total de usuarios
+      </div>
+      <strong>{{ totalUsuarios }}</strong>
+      <span>Cuentas registradas</span>
+    </article>
+
+    <article class="resumen-card">
+      <div class="resumen-titulo">
+        Usuarios activos
+      </div>
+      <strong>{{ totalActivos }}</strong>
+      <span>Con acceso habilitado</span>
+    </article>
+
+    <article class="resumen-card">
+      <div class="resumen-titulo">
+        Usuarios inactivos
+      </div>
+      <strong>{{ totalInactivos }}</strong>
+      <span>Con acceso deshabilitado</span>
+    </article>
+
+  </section>
+
+  <!-- MENSAJES -->
+  <div
+    *ngIf="mensaje"
+    class="alerta alerta-exito"
+    role="status">
+    {{ mensaje }}
+  </div>
+
+  <div
+    *ngIf="error"
+    class="alerta alerta-error"
+    role="alert">
+    {{ error }}
+  </div>
+
+  <!-- LISTADO DE USUARIOS -->
+  <section class="tabla-card">
+
+    <div class="tabla-header">
+      <div>
+        <h2>Usuarios registrados</h2>
+        <p>
+          Consulta, actualiza y administra las cuentas.
+        </p>
+      </div>
+
+      <input
+        type="search"
+        class="input-busqueda"
+        [(ngModel)]="busqueda"
+        placeholder="Buscar usuario..."
+        aria-label="Buscar usuarios">
+    </div>
+
+    <div class="tabla-scroll">
+      <table class="usuarios-tabla">
+
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Registro</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr *ngIf="cargando">
+            <td colspan="6" class="mensaje-tabla">
+              Cargando usuarios...
+            </td>
+          </tr>
+
+          <tr
+            *ngFor="let usuario of usuariosFiltrados">
+
+            <td class="nombre">
+              {{ usuario.nombre }}
+            </td>
+
+            <td>
+              {{ usuario.correo }}
+            </td>
+
+            <td>
+              <span class="rol">
+                {{ usuario.rol }}
+              </span>
+            </td>
+
+            <td>
+              <span
+                class="estado"
+                [class.estado-activo]="usuario.activo"
+                [class.estado-inactivo]="!usuario.activo">
+                {{ usuario.activo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+
+            <td>
+              {{ usuario.creadoEn | date:'dd/MM/yyyy' }}
+            </td>
+
+            <!-- TODOS LOS BOTONES CRUD -->
+            <td>
+              <div class="acciones">
+
+                <button
+                  type="button"
+                  class="btn btn-ver"
+                  [disabled]="procesandoId !== null"
+                  (click)="verUsuario(usuario)">
+                  Ver
+                </button>
+
+                <button
+                  type="button"
+                  class="btn btn-editar"
+                  [disabled]="procesandoId !== null"
+                  (click)="editarUsuario(usuario)">
+                  Editar
+                </button>
+
+                <button
+                  type="button"
+                  class="btn btn-estado"
+                  [disabled]="procesandoId !== null"
+                  (click)="cambiarEstadoUsuario(usuario)">
+                  {{ usuario.activo ? 'Desactivar' : 'Activar' }}
+                </button>
+
+                <button
+                  type="button"
+                  class="btn btn-eliminar"
+                  [disabled]="!usuario.activo || procesandoId !== null"
+                  (click)="eliminarUsuario(usuario)">
+                  Eliminar
+                </button>
+
+              </div>
+            </td>
+
+          </tr>
+
+          <tr
+            *ngIf="!cargando && usuariosFiltrados.length === 0">
+            <td colspan="6" class="mensaje-tabla">
+              No se encontraron usuarios.
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+  </section>
+
+  <!-- MODAL CREAR / ACTUALIZAR -->
+  <div
+    class="modal-overlay"
+    *ngIf="mostrarFormulario">
+
+    <section
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="formulario-titulo">
+
+      <div class="modal-header">
+        <div>
+          <h2 id="formulario-titulo">
+            {{ usuarioEditando ? 'Actualizar usuario' : 'Nuevo usuario' }}
+          </h2>
+          <p>Completa los datos de la cuenta.</p>
+        </div>
+
+        <button
+          type="button"
+          class="cerrar"
+          aria-label="Cerrar"
+          [disabled]="guardando"
+          (click)="cerrarFormulario()">
+          ×
+        </button>
+      </div>
+
+      <form
+        [formGroup]="formulario"
+        (ngSubmit)="guardarUsuario()">
+
+        <div class="campo">
+          <label for="nombre">Nombre completo</label>
+          <input
+            id="nombre"
+            type="text"
+            formControlName="nombre"
+            maxlength="150"
+            placeholder="Ej. María López">
+
+          <small
+            *ngIf="
+              formulario.controls.nombre.touched &&
+              formulario.controls.nombre.invalid
+            ">
+            Ingresa un nombre válido.
+          </small>
+        </div>
+
+        <div class="campo">
+          <label for="correo">Correo electrónico</label>
+          <input
+            id="correo"
+            type="email"
+            formControlName="correo"
+            maxlength="150"
+            placeholder="usuario@healkit.test">
+
+          <small
+            *ngIf="
+              formulario.controls.correo.touched &&
+              formulario.controls.correo.invalid
+            ">
+            Ingresa un correo válido.
+          </small>
+        </div>
+
+        <div class="campo" *ngIf="!usuarioEditando">
+          <label for="clave">Contraseña temporal</label>
+          <input
+            id="clave"
+            type="password"
+            formControlName="clave"
+            minlength="12"
+            maxlength="72"
+            autocomplete="new-password"
+            placeholder="Entre 12 y 72 caracteres">
+          <small>
+            El administrador debe entregar esta contraseña
+            al usuario por un medio seguro.
+          </small>
+        </div>
+
+        <div class="campo">
+          <label for="rol">Rol del usuario</label>
+
+          <select
+            id="rol"
+            formControlName="idRol">
+
+            <option [ngValue]="0">
+              Seleccionar rol
+            </option>
+
+            <option
+              *ngFor="let rol of roles"
+              [ngValue]="rol.id_rol">
+              {{ rol.nombre }}
+            </option>
+
+          </select>
+        </div>
+
+        <div
+          class="alerta alerta-error"
+          role="alert"
+          *ngIf="error">
+          {{ error }}
+        </div>
+
+        <div class="modal-botones">
+          <button
+            type="button"
+            class="btn btn-cancelar"
+            [disabled]="guardando"
+            (click)="cerrarFormulario()">
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="formulario.invalid || guardando">
+            {{
+              guardando
+                ? 'Guardando...'
+                : usuarioEditando
+                  ? 'Guardar cambios'
+                  : 'Registrar usuario'
+            }}
+          </button>
+        </div>
+
+      </form>
+    </section>
+  </div>
+
+  <!-- MODAL VER USUARIO -->
+  <div
+    class="modal-overlay"
+    *ngIf="mostrarDetalle && usuarioDetalle">
+
+    <section
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="detalle-titulo">
+
+      <div class="modal-header">
+        <h2 id="detalle-titulo">Detalle del usuario</h2>
+
+        <button
+          type="button"
+          class="cerrar"
+          aria-label="Cerrar"
+          (click)="cerrarDetalle()">
+          ×
+        </button>
+      </div>
+
+      <div class="detalle">
+        <p>
+          <strong>ID:</strong>
+          {{ usuarioDetalle.id }}
+        </p>
+        <p>
+          <strong>Nombre:</strong>
+          {{ usuarioDetalle.nombre }}
+        </p>
+        <p>
+          <strong>Correo:</strong>
+          {{ usuarioDetalle.correo }}
+        </p>
+        <p>
+          <strong>Rol:</strong>
+          {{ usuarioDetalle.rol }}
+        </p>
+        <p>
+          <strong>Estado:</strong>
+          {{ usuarioDetalle.activo ? 'Activo' : 'Inactivo' }}
+        </p>
+        <p>
+          <strong>Registrado:</strong>
+          {{ usuarioDetalle.creadoEn | date:'dd/MM/yyyy HH:mm' }}
+        </p>
+      </div>
+
+      <div class="modal-botones">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="cerrarDetalle()">
+          Cerrar
+        </button>
+      </div>
+
+    </section>
+  </div>
+
+</div>

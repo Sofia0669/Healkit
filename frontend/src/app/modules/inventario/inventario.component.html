@@ -1,1 +1,14 @@
+
+<p *ngIf="cargando" class="inventario-mensaje">
+  Cargando productos...
+</p>
+
+<div *ngIf="error" class="inventario-error" role="alert">
+  <p>{{ error }}</p>
+  <button type="button" (click)="cargarProductos()">
+    Reintentar
+  </button>
+</div>
+
 <app-module-view [config]="config"></app-module-view>
+
