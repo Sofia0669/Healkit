@@ -210,7 +210,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
 /* Layout */
 .app-shell {
   display:grid;
-  grid-template-columns:252px minmax(0,1fr);
+  grid-template-columns:232px minmax(0,1fr);
   min-height:100vh
 }
 
@@ -225,11 +225,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
 
 .brand-logo {
   display:block;
-  width:218px;
-  height:145px;
+  width:190px;
+  height:126px;
   object-fit:contain;
   object-position:center;
-  margin:0 auto 15px;
+  margin:0 auto 12px;
   border-radius:4px
 }
 
@@ -240,17 +240,17 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
 
 .nav-item {
   display:flex;
-  gap:17px;
+  gap:14px;
   align-items:center;
-  padding:13px 18px;
+  padding:10px 16px;
   border-radius:16px;
-  font-size:17px;
-  min-height:55px
+  font-size:16px;
+  min-height:48px
 }
 
 .nav-item .hk-icon {
-  width:23px;
-  height:23px;
+  width:21px;
+  height:21px;
   flex:0 0 auto
 }
 
@@ -282,13 +282,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .topbar {
-  height:94px;
+  height:76px;
   background:#ffffffdd;
   border-bottom:1px solid #e0edf5;
   display:flex;
   align-items:center;
   gap:20px;
-  padding:0 32px
+  padding:0 28px
 }
 
 .hamburger {
@@ -308,8 +308,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
   color:var(--muted);
   width:min(450px,48vw);
   margin:auto;
-  padding:11px 20px;
-  font-size:16px
+  padding:9px 18px;
+  font-size:15px
 }
 
 .user-bar {
@@ -323,11 +323,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
   border-radius:50%;
   background:#087bd0;
   color:white;
-  width:43px;
-  height:43px;
+  width:38px;
+  height:38px;
   display:grid;
   place-items:center;
-  font:18px Arial,sans-serif
+  font:16px Arial,sans-serif
 }
 
 .user-label {
@@ -338,42 +338,42 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .user-label strong {
-  font-size:16px;
+  font-size:15px;
   color:var(--ink)
 }
 
 .user-label small {
-  font-size:14px;
+  font-size:13px;
   color:#44719b
 }
 
 .main-content {
-  padding:36px 30px 48px;
+  padding:28px 26px 40px;
   max-width:1660px;
   margin:auto
 }
 
 /* Reusable typography and cards */
 h1 {
-  font-size:clamp(31px,3vw,47px);
+  font-size:clamp(26px,2.4vw,36px);
   line-height:1.13;
   margin-bottom:5px
 }
 
 h2 {
-  font-size:27px
+  font-size:22px
 }
 
 h3 {
-  font-size:22px
+  font-size:19px
 }
 
 .module-heading,.welcome-row {
   display:flex;
-  gap:22px;
+  gap:18px;
   align-items:center;
-  min-height:100px;
-  margin-bottom:28px
+  min-height:80px;
+  margin-bottom:22px
 }
 
 .module-heading {
@@ -389,10 +389,10 @@ h3 {
 }
 
 .heading-icon,.welcome-glyph {
-  width:80px;
-  height:80px;
+  width:64px;
+  height:64px;
   background:linear-gradient(140deg,#e5fafa,#c6f0f3);
-  border-radius:23px;
+  border-radius:18px;
   color:#008eab;
   display:grid;
   place-items:center;
@@ -400,20 +400,20 @@ h3 {
 }
 
 .heading-icon .hk-icon,.welcome-glyph .hk-icon {
-  width:45px;
-  height:45px
+  width:36px;
+  height:36px
 }
 
 .heading-copy p,.welcome-left p {
   color:#315f8a;
-  font-size:20px;
+  font-size:17px;
   margin-bottom:0
 }
 
 .stats {
   display:grid;
-  gap:20px;
-  margin:0 0 32px
+  gap:16px;
+  margin:0 0 26px
 }
 
 .stats-three {
@@ -425,11 +425,11 @@ h3 {
 }
 
 .stat-card {
-  min-height:126px;
+  min-height:100px;
   display:flex;
   align-items:center;
-  gap:18px;
-  padding:21px 20px;
+  gap:14px;
+  padding:16px 18px;
   background:white;
   border:1px solid var(--border);
   border-radius:16px;
@@ -441,16 +441,16 @@ h3 {
   display:grid;
   place-items:center;
   flex:0 0 auto;
-  width:64px;
-  height:64px;
+  width:52px;
+  height:52px;
   border-radius:50%;
   background:var(--mint);
   color:#0097a6
 }
 
 .stat-icon .hk-icon {
-  width:35px;
-  height:35px
+  width:28px;
+  height:28px
 }
 
 .stat-card>div {
@@ -460,33 +460,33 @@ h3 {
 }
 
 .stat-label {
-  font-size:18px;
+  font-size:15px;
   color:#315f8a
 }
 
 .stat-card strong {
-  font-size:clamp(26px,2.2vw,37px);
+  font-size:clamp(22px,1.8vw,30px);
   line-height:1.12;
   overflow-wrap:anywhere
 }
 
 .btn {
   border:1px solid transparent;
-  min-height:50px;
-  padding:10px 20px;
+  min-height:44px;
+  padding:8px 18px;
   border-radius:11px;
   display:inline-flex;
   align-items:center;
   justify-content:center;
   gap:10px;
   white-space:nowrap;
-  font-size:16px;
+  font-size:15px;
   font-weight:600
 }
 
 .btn .hk-icon {
-  width:21px;
-  height:21px
+  width:19px;
+  height:19px
 }
 
 .btn-primary {
@@ -586,7 +586,7 @@ h3 {
   display:flex;
   gap:17px;
   align-items:center;
-  margin-bottom:23px
+  margin-bottom:20px
 }
 
 .search-field {
@@ -599,7 +599,7 @@ h3 {
   border:1px solid #c9e3f2;
   background:#f4fbff;
   border-radius:11px;
-  height:51px;
+  height:44px;
   color:var(--blue)
 }
 
@@ -608,7 +608,7 @@ h3 {
   background:transparent;
   border:0;
   outline:0;
-  font-size:16px;
+  font-size:15px;
   color:var(--ink)
 }
 
@@ -656,14 +656,14 @@ th {
   color:#12385f;
   font-weight:700;
   text-align:left;
-  padding:17px 15px;
+  padding:13px 14px;
   white-space:nowrap
 }
 
 td {
   border-top:1px solid #e4eef5;
   color:#133d64;
-  padding:15px;
+  padding:12px 14px;
   white-space:nowrap
 }
 

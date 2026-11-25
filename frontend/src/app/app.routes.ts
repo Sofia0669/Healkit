@@ -5,6 +5,9 @@ import { LoginComponent } from './modules/login/login.component';
 import { InicioComponent } from './modules/inicio/inicio.component';
 import { InventarioComponent } from './modules/inventario/inventario.component';
 import { VentasComponent } from './modules/ventas/ventas.component';
+import { NuevaVentaComponent } from './modules/ventas/nueva-venta/nueva-venta.component';
+import { FacturaComponent } from './modules/ventas/factura/factura.component';
+import { ReportesVentasComponent } from './modules/ventas/reportes/reportes.component';
 import { ProveedoresComponent } from './modules/proveedores/proveedores.component';
 import { CrmComponent } from './modules/crm/crm.component';
 import { ContabilidadComponent } from './modules/contabilidad/contabilidad.component';
@@ -41,8 +44,13 @@ export const routes: Routes = [
       },
       {
         path: 'ventas',
-        component: VentasComponent,
-        canActivate: [rolGuard]
+        canActivate: [rolGuard],
+        children: [
+          { path: '', component: VentasComponent },
+          { path: 'nueva', component: NuevaVentaComponent },
+          { path: 'reportes', component: ReportesVentasComponent, canActivate: [rolGuard] },
+          { path: ':id/factura', component: FacturaComponent }
+        ]
       },
       {
         path: 'proveedores',

@@ -1,11 +1,11 @@
 <section class="welcome-row">
-  <div class="welcome-left"><span class="welcome-glyph"><hk-icon name="package"/></span><div><h1>¡Hola, Angie!</h1><p>Bienvenida al sistema de gestión de HealKit</p></div></div>
-  <div class="welcome-date"><hk-icon name="calendar"/><span>Fecha de demostración: 23/10/2026</span></div>
+  <div class="welcome-left"><span class="welcome-glyph"><hk-icon name="package"/></span><div><h1>¡Hola, {{nombre}}!</h1><p>Te damos la bienvenida al sistema de gestión de HealKit</p></div></div>
+  <div class="welcome-date"><hk-icon name="calendar"/><span>Hoy: {{hoy | date:'dd/MM/yyyy'}}</span></div>
 </section>
 <section class="stats stats-three">
-  <a class="stat-card" routerLink="/inventario"><span class="stat-icon"><hk-icon name="pill"/></span><div><span class="stat-label">Inventario</span><strong>320</strong></div></a>
-  <a class="stat-card" routerLink="/ventas"><span class="stat-icon"><hk-icon name="cart"/></span><div><span class="stat-label">Ventas</span><strong>145</strong></div></a>
-  <a class="stat-card" routerLink="/crm"><span class="stat-icon"><hk-icon name="users"/></span><div><span class="stat-label">Clientes</span><strong>218</strong></div></a>
+  @for (t of tarjetas; track t.url) {
+    <a class="stat-card" [routerLink]="t.url"><span class="stat-icon"><hk-icon [name]="t.icono"/></span><div><span class="stat-label">{{t.etiqueta}}</span><strong>{{t.valor}}</strong></div></a>
+  }
 </section>
 <section class="home-banner"><div><h2>Cuidamos tu salud<br/>en cada etapa</h2><div class="short-line left"></div></div></section>
 <section class="mission-section">

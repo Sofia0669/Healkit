@@ -1,0 +1,86 @@
+<section class="module-heading">
+  <span class="heading-icon"><hk-icon name="cart"/></span>
+  <div class="heading-copy"><h1>Nueva venta</h1><p>Agrega los productos, elige el cliente y registra el pago</p></div>
+</section>
+
+<div class="venta-layout">
+  <div class="venta-izquierda">
+
+    <div class="panel venta-bloque">
+      <h2>Productos</h2>
+      <label class="search-field"><hk-icon name="search"/>
+        <input [(ngModel)]="busqueda" (input)="buscarProductos()" placeholder="Buscar por nombre o código..." aria-label="Buscar producto"/>
+      </label>
+      <div class="table-scroll lista-productos">
+        <table>
+          <thead><tr><th>Código</th><th>Producto</th><th>Stock</th><th>Precio</th><th></th></tr></thead>
+          <tbody>
+            @for (p of resultados; track p.id) {
+              <tr>
+                <td>{{p.codigo}}</td>
+                <td>{{p.nombre}}</td>
+                <td>{{p.stock}}</td>
+                <td>{{dinero(p.precioVenta)}}</td>
+                <td><button type="button" class="btn btn-outline" [disabled]="p.stock===0" (click)="agregar(p)">Agregar</button></td>
+              </tr>
+            } @empty {
+              <tr><td colspan="5" class="no-data">No se encontraron productos.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel venta-bloque">
+      <h2>Detalle de la venta</h2>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Producto</th><th>Precio unitario</th><th>Cantidad</th><th>Subtotal</th><th></th></tr></thead>
+          <tbody>
+            @for (l of carrito; track l.idProducto; let i = $index) {
+              <tr>
+                <td>{{l.nombre}}</td>
+                <td>{{dinero(l.precio)}}</td>
+                <td><input class="cantidad" type="number" min="1" [max]="l.stock" [(ngModel)]="l.cantidad" [name]="'cantidad'+i" aria-label="Cantidad"/></td>
+                <td>{{dinero(l.precio * l.cantidad)}}</td>
+                <td><button type="button" class="btn btn-outline" (click)="quitar(i)">Quitar</button></td>
+              </tr>
+            } @empty {
+              <tr><td colspan="5" class="no-data">Aún no hay productos en la venta.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <aside class="panel venta-bloque venta-resumen">
+    <h2>Resumen</h2>
+    <dl>
+      <div><dt>Fecha</dt><dd>{{hoy | date:'dd/MM/yyyy HH:mm'}}</dd></div>
+      <div><dt>N.º de venta</dt><dd>Se asigna al registrar</dd></div>
+    </dl>
+
+    <label>Cliente
+      <select [(ngModel)]="idCliente">
+        <option [ngValue]="null">Sin cliente</option>
+        @for (c of clientes; track c.id) { <option [ngValue]="c.id">{{c.nombre}}</option> }
+      </select>
+    </label>
+    <label>Método de pago
+      <select [(ngModel)]="metodoPago">
+        <option value="EFECTIVO">Efectivo</option>
+        <option value="TARJETA">Tarjeta</option>
+        <option value="SINPE">SINPE Móvil</option>
+        <option value="OTRO">Otro</option>
+      </select>
+    </label>
+
+    <p class="total-venta"><span>Total</span><strong>{{dinero(total)}}</strong></p>
+    @if (error) { <p class="error-venta" role="alert">{{error}}</p> }
+
+    <button class="btn btn-primary wide" type="button" [disabled]="guardando" (click)="registrar()"><hk-icon name="receipt"/> Registrar venta</button>
+    <a class="btn btn-outline wide" routerLink="/ventas">Cancelar</a>
+  </aside>
+</div>

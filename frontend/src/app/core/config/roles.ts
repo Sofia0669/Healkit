@@ -43,6 +43,13 @@ export const ACCESO_MODULOS: Record<string, string[]> = {
     ROLES.ENCARGADO
   ],
 
+  // Reportes de ventas (pantalla dentro del módulo de ventas): el Empleado no entra.
+  '/reportes': [
+    ROLES.ADMIN,
+    ADMIN_ANTERIOR,
+    ROLES.ENCARGADO
+  ],
+
   '/contabilidad': [
     ROLES.ADMIN,
     ADMIN_ANTERIOR

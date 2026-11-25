@@ -1,5 +1,5 @@
 
-<div class="app-shell">
+<div class="app-shell" [class.menu-oculto]="menuOculto">
   <aside class="sidebar" [class.sidebar-open]="menuAbierto">
     <img class="brand-logo" src="/assets/logo-menu.png" alt="HealKit Pharmacy"/>
     <nav class="nav">
@@ -17,9 +17,9 @@
   </aside>
   <div class="app-body">
     <header class="topbar">
-      <button class="hamburger" aria-label="Abrir menú" (click)="menuAbierto=!menuAbierto"><hk-icon name="menu"/></button>
+      <button class="hamburger" aria-label="Abrir menú" (click)="alternarMenu()"><hk-icon name="menu"/></button>
       <div class="top-search"><hk-icon name="search"/><span>Buscar en HealKit...</span></div>
-      <div class="user-bar"><hk-icon name="bell"/><div class="avatar">AS</div><div class="user-label"><strong>Angie Solano</strong><small>Administradora</small></div></div>
+      <div class="user-bar"><hk-icon name="bell"/><div class="avatar">{{iniciales}}</div><div class="user-label"><strong>{{usuario?.nombre}}</strong><small>{{usuario?.rol}}</small></div></div>
     </header>
     <main class="main-content"><router-outlet/></main>
   </div>

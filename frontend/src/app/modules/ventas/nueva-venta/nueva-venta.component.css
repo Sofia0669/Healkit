@@ -1,0 +1,26 @@
+/* Estilos de Nueva venta */
+.venta-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; align-items: start; margin-top: 20px; }
+.venta-izquierda { display: grid; gap: 20px; }
+.venta-bloque { padding: 22px; display: grid; gap: 14px; }
+.venta-bloque h2 { margin: 0; }
+
+.lista-productos { max-height: 260px; overflow: auto; }
+.cantidad { width: 80px; border: 1px solid var(--border); border-radius: 9px; padding: 8px; }
+
+.venta-resumen { position: sticky; top: 16px; }
+.venta-resumen dl { display: grid; gap: 10px; margin: 0; }
+.venta-resumen dl div { display: flex; justify-content: space-between; gap: 10px; }
+.venta-resumen dt { color: #5b7a96; }
+.venta-resumen dd { margin: 0; text-align: right; }
+.venta-resumen label { display: grid; gap: 7px; color: #234e76; }
+.venta-resumen select { border: 1px solid var(--border); border-radius: 10px; padding: 12px; background: #fff; color: var(--ink); }
+
+.total-venta { display: flex; justify-content: space-between; align-items: baseline; margin: 6px 0 0; font-size: 18px; }
+.total-venta strong { font-size: 28px; }
+.error-venta { color: #b3261e; margin: 0; }
+.wide { width: 100%; justify-content: center; text-align: center; text-decoration: none; }
+
+@media (max-width: 1000px) {
+  .venta-layout { grid-template-columns: 1fr; }
+  .venta-resumen { position: static; }
+}

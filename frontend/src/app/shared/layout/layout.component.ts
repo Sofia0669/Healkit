@@ -30,7 +30,8 @@ export class LayoutComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
-  menuAbierto = false;
+  menuAbierto = false; // pantallas pequeñas: el menú se abre sobre el contenido
+  menuOculto = false;  // pantallas grandes: el menú se esconde y el contenido ocupa todo el ancho
 
   // Menú completo de HealKit.
   private readonly menuCompleto = [
@@ -52,6 +53,26 @@ export class LayoutComponent {
     return this.menuCompleto.filter(item =>
       puedeAcceder(rol, item.url)
     );
+  }
+
+  // Botón de las 3 rayitas: esconde o muestra el panel de la izquierda.
+  alternarMenu(): void {
+    if (window.innerWidth > 680) {
+      this.menuOculto = !this.menuOculto;
+    } else {
+      this.menuAbierto = !this.menuAbierto;
+    }
+  }
+
+  // Usuario que inició sesión (se muestra arriba a la derecha).
+  get usuario() {
+    return this.auth.usuarioActual;
+  }
+
+  // Iniciales del nombre, por ejemplo "Erick Sánchez" -> "ES".
+  get iniciales(): string {
+    const palabras = (this.usuario?.nombre ?? '').trim().split(/\s+/).filter(Boolean);
+    return palabras.slice(0, 2).map(p => p[0].toUpperCase()).join('') || '?';
   }
 
   // Cerrar la sesión actual.

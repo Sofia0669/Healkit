@@ -12,3 +12,31 @@
   font-weight: 500;
   line-height: 1.5;
 }
+
+/* ---- Adaptación al zoom / tamaño de pantalla ----
+   La imagen se ancla arriba para que el logo nunca se corte, y la tarjeta usa "em":
+   todo su contenido crece o se reduce junto con el ancho de la ventana. */
+.login-art { background-position: center 12%; }
+
+.login-card {
+  font-size: clamp(14px, 1.05vw, 26px);
+  width: min(34em, 100%);
+  padding: 2.6em 2.6em 2em;
+  border-radius: 1.8em;
+}
+.login-card h1 { font-size: 3em; margin-bottom: 0.15em; }
+.login-card h2 { font-size: 1.7em; margin-bottom: 0.4em; }
+.login-card > .muted { font-size: 1.1em; margin-bottom: 1.8em; }
+.login-form { gap: 1em; }
+.field-icon { height: 3.5em; padding: 0 1.1em; gap: 0.9em; border-radius: 0.7em; }
+.field-icon input { font-size: 1.1em; }
+.login-options { font-size: 0.95em; margin: 0.7em 0 0.9em; }
+.login-btn { min-height: 3.2em; font-size: 1.3em !important; }
+.login-quote { font-size: 1.15em; margin: 1.9em 0 0.8em; }
+
+@media (max-width: 850px) {
+  .login-art { min-height: 340px; background-position: center 28%; }
+}
+@media (max-width: 680px) {
+  .login-card { padding: 28px 20px; }
+}

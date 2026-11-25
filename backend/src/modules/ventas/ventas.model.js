@@ -1,2 +1,2 @@
-// Modelo para Ventas: las consultas MySQL se implementarán aquí.
-export const estadoModelo = () => ({ modulo: 'ventas', implementado: false });
+// Valores permitidos de Ventas.
+export const METODOS_PAGO = ['EFECTIVO', 'TARJETA', 'SINPE', 'OTRO'];

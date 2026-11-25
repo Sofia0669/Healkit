@@ -1,0 +1,85 @@
+<section class="module-heading">
+  <span class="heading-icon"><hk-icon name="receipt"/></span>
+  <div class="heading-copy"><h1>Factura</h1><p>Comprobante de la venta registrada</p></div>
+</section>
+
+<div class="acciones-factura">
+  <a class="btn btn-outline" routerLink="/ventas">Volver a ventas</a>
+  @if (venta) {
+    <button class="btn btn-primary" type="button" [disabled]="descargandoPdf" (click)="descargarPdf()"><hk-icon name="receipt"/> Descargar PDF</button>
+    @if (puedeAnular && !anulando) {
+      <button class="btn btn-outline" type="button" (click)="anulando = true">Anular venta</button>
+    }
+  }
+</div>
+
+@if (anulando) {
+  <div class="panel form-anulacion">
+    <label>Motivo de la anulación
+      <input [(ngModel)]="motivoAnulacion" maxlength="150" placeholder="Ej.: error al digitar la cantidad" aria-label="Motivo de la anulación"/>
+    </label>
+    <p>Al anular, el stock de los productos vuelve al inventario y la venta queda marcada como anulada.</p>
+    <div class="botones-anulacion">
+      <button class="btn btn-primary" type="button" [disabled]="procesandoAnulacion" (click)="confirmarAnulacion()">Confirmar anulación</button>
+      <button class="btn btn-outline" type="button" [disabled]="procesandoAnulacion" (click)="anulando = false">Cancelar</button>
+    </div>
+  </div>
+}
+
+@if (venta) {
+  @if (venta.estado === 'ANULADA') { <p class="aviso-anulada">Esta venta fue anulada y no cuenta en los totales ni en los reportes.</p> }
+  <article class="panel factura">
+    <header class="factura-encabezado">
+      <div class="empresa">
+        <img src="/assets/healkit-logo-factura.png" alt="Logo de HealKit"/>
+        <div><h2>{{empresa.nombre}}</h2><p>{{empresa.ubicacion}}</p></div>
+      </div>
+      <div class="factura-numero">
+        <span>Factura</span>
+        <strong>{{venta.numeroFactura}}</strong>
+        <span>{{venta.fecha | date:'dd/MM/yyyy HH:mm'}}</span>
+      </div>
+    </header>
+
+    <section class="factura-datos">
+      <div>
+        <h3>Cliente</h3>
+        <p>{{venta.cliente ?? 'Cliente general'}}</p>
+        @if (venta.identificacionCliente) { <p>Identificación: {{venta.identificacionCliente}}</p> }
+        @if (venta.correoCliente) { <p>{{venta.correoCliente}}</p> }
+      </div>
+      <div>
+        <h3>Pago</h3>
+        <p>{{venta.metodoPago | titlecase}}</p>
+        @if (venta.vendedor) { <p>Atendido por: {{venta.vendedor}}</p> }
+      </div>
+    </section>
+
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Código</th><th>Descripción</th><th>Cantidad</th><th>Precio unitario</th><th>Subtotal</th></tr></thead>
+        <tbody>
+          @for (d of venta.detalles; track d.codigo) {
+            <tr>
+              <td>{{d.codigo}}</td>
+              <td>{{d.nombre}}</td>
+              <td>{{d.cantidad}}</td>
+              <td>{{dinero(d.precioUnitario)}}</td>
+              <td>{{dinero(d.subtotal)}}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <footer class="factura-totales">
+      <p><span>Subtotal</span><span>{{dinero(venta.subtotal)}}</span></p>
+      <p><span>Impuesto</span><span>{{dinero(venta.impuesto)}}</span></p>
+      <p class="total"><span>Total</span><strong>{{dinero(venta.total)}}</strong></p>
+    </footer>
+  </article>
+}
+
+@if (error) {
+  <div class="notice" role="alert">{{error}}</div>
+}

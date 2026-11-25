@@ -1,0 +1,32 @@
+/* Estilos de la factura */
+.acciones-factura { margin: 16px 0; display: flex; gap: 12px; flex-wrap: wrap; }
+.acciones-factura .btn { text-decoration: none; }
+
+.factura { max-width: 860px; margin: 0 auto; padding: 32px; display: grid; gap: 24px; }
+
+.factura-encabezado { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+.empresa { display: flex; align-items: center; gap: 14px; }
+.empresa img { height: 64px; width: auto; }
+.empresa h2, .empresa p { margin: 0; }
+.empresa p { color: #5b7a96; }
+
+.factura-numero { display: grid; text-align: right; gap: 2px; }
+.factura-numero strong { font-size: 28px; }
+.factura-numero span { color: #5b7a96; }
+
+.factura-datos { display: flex; gap: 48px; flex-wrap: wrap; }
+.factura-datos h3 { margin: 0 0 6px; }
+.factura-datos p { margin: 2px 0; }
+
+.factura-totales { display: grid; gap: 6px; margin-left: auto; width: min(320px, 100%); }
+.factura-totales p { display: flex; justify-content: space-between; margin: 0; }
+.factura-totales .total { border-top: 2px solid var(--border); padding-top: 10px; font-size: 20px; }
+.factura-totales .total strong { font-size: 26px; }
+
+/* Anulación */
+.form-anulacion { max-width: 860px; margin: 0 auto 16px; padding: 18px 22px; display: grid; gap: 10px; }
+.form-anulacion label { display: grid; gap: 6px; color: #234e76; }
+.form-anulacion input { border: 1px solid var(--border); border-radius: 10px; padding: 10px; background: #fff; color: var(--ink); }
+.form-anulacion p { margin: 0; color: #5b7a96; }
+.botones-anulacion { display: flex; gap: 12px; flex-wrap: wrap; }
+.aviso-anulada { max-width: 860px; margin: 0 auto 12px; padding: 10px 14px; border-radius: 10px; background: #fff0f1; color: #b3261e; border: 1px solid #efc1c5; }

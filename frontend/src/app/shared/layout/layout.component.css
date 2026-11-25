@@ -1,1 +1,7 @@
 /* Estilos comunes del menú y la cabecera en src/styles.css. */
+
+/* Pantallas grandes: al esconder el menú, el contenido ocupa todo el ancho. */
+@media (min-width: 681px) {
+  .app-shell.menu-oculto { grid-template-columns: minmax(0, 1fr); }
+  .app-shell.menu-oculto .sidebar { display: none; }
+}

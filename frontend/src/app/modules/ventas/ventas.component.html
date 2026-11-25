@@ -1,1 +1,45 @@
-<app-module-view [config]="config"></app-module-view>
+<section class="module-heading module-hero" [style.--banner-image]="'url(/assets/'+config.banner+')'">
+  <span class="heading-icon"><hk-icon [name]="config.icon"/></span>
+  <div class="heading-copy"><h1>{{config.title}}</h1><p>{{config.subtitle}}</p></div>
+</section>
+
+<section class="stats stats-three">
+  <div class="stat-card"><span class="stat-icon"><hk-icon name="cart"/></span><div><span class="stat-label">Ventas del día</span><strong>{{dinero(totalDelDia)}}</strong></div></div>
+  <div class="stat-card"><span class="stat-icon"><hk-icon name="receipt"/></span><div><span class="stat-label">Ventas registradas</span><strong>{{cantidadCompletadas}}</strong></div></div>
+  <div class="stat-card"><span class="stat-icon"><hk-icon name="coins"/></span><div><span class="stat-label">Ventas del mes</span><strong>{{dinero(totalDelMes)}}</strong></div></div>
+</section>
+
+<div class="tools-row">
+  <label class="search-field"><hk-icon name="search"/><input [(ngModel)]="query" placeholder="Buscar por factura, cliente o método de pago..." aria-label="Buscar ventas"/></label>
+  @if (puedeVerReportes) { <button class="btn btn-outline" routerLink="/ventas/reportes"><hk-icon name="chart"/>Reportes</button> }
+  <button class="btn btn-primary" routerLink="/ventas/nueva"><hk-icon name="plus"/>{{config.button}}</button>
+</div>
+
+<div class="panel table-panel">
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Factura</th><th>Fecha</th><th>Cliente</th><th>Vendedor</th><th>Método de pago</th><th>Total</th><th>Estado</th><th>Acciones</th></tr></thead>
+      <tbody>
+        @for (venta of ventasFiltradas; track venta.id) {
+          <tr>
+            <td>{{venta.numeroFactura}}</td>
+            <td>{{venta.fecha | date:'dd/MM/yyyy HH:mm'}}</td>
+            <td>{{venta.cliente ?? 'Sin cliente'}}</td>
+            <td>{{venta.vendedor ?? '—'}}</td>
+            <td>{{venta.metodoPago | titlecase}}</td>
+            <td>{{dinero(venta.total)}}</td>
+            <td><span class="status" [ngClass]="claseEstado(venta.estado)">{{venta.estado | titlecase}}</span></td>
+            <td class="row-actions"><button title="Ver factura" aria-label="Ver factura" [routerLink]="['/ventas', venta.id, 'factura']"><hk-icon name="eye"/></button></td>
+          </tr>
+        } @empty {
+          <tr><td colspan="8" class="no-data">No se encontraron ventas.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+@if (aviso) {
+  <div class="notice" role="status">{{aviso}} <button (click)="aviso=''" aria-label="Cerrar mensaje">×</button></div>
+}
+
