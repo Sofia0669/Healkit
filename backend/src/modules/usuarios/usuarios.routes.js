@@ -7,27 +7,36 @@ import { autorizarRol } from '../../middleware/autorizarRol.js';
 
 const router = Router();
 
-// Proteger todo el módulo de Usuarios.
+// Solo usuarios autenticados.
 router.use(autenticar);
 
-// Admitir el nombre actual y el futuro del rol administrador.
+// Solo administradores.
 router.use(
   autorizarRol('Administrador', 'Administrador General')
 );
 
-// Consultar los roles.
+// Consultar los roles disponibles.
 router.get('/roles', controller.listarRoles);
 
-// Consultar los usuarios.
+// Listar todos los usuarios.
 router.get('/', controller.listar);
 
-// Registrar un nuevo usuario.
+// Consultar un usuario por su ID.
+router.get('/:id', controller.obtenerPorId);
+
+// Registrar un usuario.
 router.post('/', controller.crear);
 
-// Cambiar el rol de un usuario.
+// Actualizar nombre, correo y rol.
+router.put('/:id', controller.actualizar);
+
+// Eliminar lógicamente un usuario.
+router.delete('/:id', controller.eliminar);
+
+// Cambiar únicamente el rol.
 router.patch('/:id/rol', controller.cambiarRol);
 
-// Activar o desactivar una cuenta.
+// Activar o desactivar.
 router.patch('/:id/estado', controller.cambiarEstado);
 
 export default router;

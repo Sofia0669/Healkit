@@ -110,3 +110,38 @@ export async function cambiarEstado(id, activo) {
     ? buscarPorId(id)
     : null;
 }
+
+// Actualizar datos de un usuario.
+export async function actualizar(id, datos) {
+  const [resultado] = await pool.execute(
+    `UPDATE usuarios
+     SET nombre = ?,
+         correo = ?,
+         id_rol = ?
+     WHERE id_usuario = ?`,
+    [
+      datos.nombre,
+      datos.correo,
+      datos.idRol,
+      id
+    ]
+  );
+
+  if (resultado.affectedRows === 0) {
+    return null;
+  }
+
+  return buscarPorId(id);
+}
+
+// Eliminar lógicamente un usuario.
+export async function eliminar(id) {
+  const [resultado] = await pool.execute(
+    `UPDATE usuarios
+     SET activo = 0
+     WHERE id_usuario = ?`,
+    [id]
+  );
+
+  return resultado.affectedRows > 0;
+}

@@ -155,3 +155,140 @@ export async function cambiarEstado(id, activo, adminActual) {
 
   return usuario;
 }
+
+
+export async function obtenerPorId(id) {
+  const idUsuario = validarId(id);
+
+  const usuario = await repository.buscarPorId(idUsuario);
+
+  if (!usuario) {
+    throw crearError('Usuario no encontrado', 404);
+  }
+
+  return usuario;
+}
+
+
+export async function actualizar(id, datos, adminActual) {
+  const idUsuario = validarId(id);
+
+  if (!datos || typeof datos !== 'object' ||
+      Array.isArray(datos)) {
+    throw crearError('Datos inválidos');
+  }
+
+  const { nombre, correo, idRol } = datos;
+
+  if (typeof nombre !== 'string' ||
+      typeof correo !== 'string') {
+    throw crearError('Nombre y correo son obligatorios');
+  }
+
+  const nombreLimpio = nombre.trim();
+  const correoLimpio = correo.trim().toLowerCase();
+
+  if (!nombreLimpio || nombreLimpio.length > 150) {
+    throw crearError('Nombre inválido');
+  }
+
+  if (
+    correoLimpio.length > 150 ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correoLimpio)
+  ) {
+    throw crearError('Correo inválido');
+  }
+
+  const usuarioActual = await repository.buscarPorId(idUsuario);
+
+  if (!usuarioActual) {
+    throw crearError('Usuario no encontrado', 404);
+  }
+
+  // Validar que el rol exista.
+  const rol = await validarRol(idRol);
+
+  // El administrador no puede quitarse su propio rol.
+  if (
+    idUsuario === Number(adminActual.id) &&
+    rol.nombre !== usuarioActual.rol
+  ) {
+    throw crearError('No puedes cambiar tu propio rol');
+  }
+
+  // Comprobar que el correo no lo utiliza otro usuario.
+  const correoExistente =
+    await repository.buscarPorCorreo(correoLimpio);
+
+  if (
+    correoExistente &&
+    Number(correoExistente.id_usuario) !== idUsuario
+  ) {
+    throw crearError('El correo ya está registrado', 409);
+  }
+
+  return repository.actualizar(idUsuario, {
+    nombre: nombreLimpio,
+    correo: correoLimpio,
+    idRol: rol.id_rol
+  });
+}
+
+
+export async function contarAdministradoresActivos() {
+  const [filas] = await pool.query(
+    `SELECT COUNT(*) AS total
+     FROM usuarios u
+     INNER JOIN roles r ON u.id_rol = r.id_rol
+     WHERE u.activo = 1
+       AND r.nombre IN (
+         'Administrador',
+         'Administrador General'
+       )`
+  );
+
+  return Number(filas[0].total);
+}
+
+
+export async function eliminar(id, adminActual) {
+  const idUsuario = validarId(id);
+
+  if (idUsuario === Number(adminActual.id)) {
+    throw crearError(
+      'No puedes eliminar tu propia cuenta'
+    );
+  }
+
+  const usuario = await repository.buscarPorId(idUsuario);
+
+  if (!usuario) {
+    throw crearError('Usuario no encontrado', 404);
+  }
+
+  if (!usuario.activo) {
+    throw crearError('El usuario ya está desactivado', 409);
+  }
+
+  const esAdministrador = [
+    'Administrador',
+    'Administrador General'
+  ].includes(usuario.rol);
+
+  if (esAdministrador) {
+    const total =
+      await repository.contarAdministradoresActivos();
+
+    if (total <= 1) {
+      throw crearError(
+        'No puedes eliminar al último administrador activo'
+      );
+    }
+  }
+
+  await repository.eliminar(idUsuario);
+
+  return {
+    mensaje: 'Usuario desactivado correctamente'
+  };
+}

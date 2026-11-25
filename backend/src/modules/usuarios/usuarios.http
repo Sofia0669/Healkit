@@ -1,12 +1,12 @@
 
-### HEALKIT - GESTIÓN DE USUARIOS
 
-@api = http://localhost:3000/api
+### HEALKIT - CRUD DE USUARIOS
 
+@baseUrl = http://localhost:3000/api
 
 ### 1. LOGIN DEL ADMINISTRADOR
 # @name loginAdmin
-POST {{api}}/auth/login
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
@@ -15,52 +15,61 @@ Content-Type: application/json
 }
 
 
-### 2. CONSULTAR ROLES DISPONIBLES
-GET {{api}}/usuarios/roles
-Authorization: Bearer {{loginAdmin.response.body.token}}
 
 
-### 3. CONSULTAR TODOS LOS USUARIOS
-GET {{api}}/usuarios
-Authorization: Bearer {{loginAdmin.response.body.token}}
+### 2. LISTAR TODOS LOS USUARIOS
+### Esperado: 200 OK
+GET {{baseUrl}}/usuarios
+Authorization: Bearer {{loginAdmin.response.body.$.token}}
 
 
-### 4. REGISTRAR UN EMPLEADO
-# @name nuevoEmpleado
-POST {{api}}/usuarios
-Authorization: Bearer {{loginAdmin.response.body.token}}
+### 3. CREAR USUARIO DE PRUEBA
+### Confirmar que idRol 2 corresponde a Empleado
+# @name crearUsuario
+POST {{baseUrl}}/usuarios
+Authorization: Bearer {{loginAdmin.response.body.$.token}}
 Content-Type: application/json
 
 {
-  "nombre": "Empleado de Prueba",
-  "correo": "empleado.nuevo@healkit.test",
+  "nombre": "Usuario de Prueba",
+  "correo": "usuario.crud@healkit.test",
   "clave": "ClaveTemporalSegura2026!",
   "idRol": 2
 }
 
 
-### 5. CAMBIAR EL ROL DEL USUARIO
-### Sustituye el ID por el devuelto al registrarlo
-PATCH {{api}}/usuarios/3/rol
-Authorization: Bearer {{loginAdmin.response.body.token}}
+### 4. CONSULTAR USUARIO POR ID
+### Esperado: 200 OK
+GET {{baseUrl}}/usuarios/{{crearUsuario.response.body.$.usuario.id}}
+Authorization: Bearer {{loginAdmin.response.body.$.token}}
+
+
+### 5. ACTUALIZAR USUARIO
+### Esperado: 200 OK
+PUT {{baseUrl}}/usuarios/{{crearUsuario.response.body.$.usuario.id}}
+Authorization: Bearer {{loginAdmin.response.body.$.token}}
 Content-Type: application/json
 
 {
-  "idRol": 1
+  "nombre": "Usuario Actualizado",
+  "correo": "usuario.actualizado@healkit.test",
+  "idRol": 2
 }
 
 
-### 6. DESACTIVAR UN USUARIO
-### Sustituye el ID por el del empleado de prueba
-PATCH {{api}}/usuarios/3/estado
-Authorization: Bearer {{loginAdmin.response.body.token}}
-Content-Type: application/json
-
-{
-  "activo": false
-}
+### 6. ELIMINAR USUARIO
+### Esperado: 200 OK
+### Cambia activo de 1 a 0.
+DELETE {{baseUrl}}/usuarios/{{crearUsuario.response.body.$.usuario.id}}
+Authorization: Bearer {{loginAdmin.response.body.$.token}}
 
 
-### 7. COMPROBAR ACCESO SIN JWT
-GET {{api}}/usuarios
+### 7. COMPROBAR RESULTADO
+GET {{baseUrl}}/usuarios/{{crearUsuario.response.body.$.usuario.id}}
+Authorization: Bearer {{loginAdmin.response.body.$.token}}
+
+
+### 8. ACCESO SIN TOKEN
+### Esperado: 401 Unauthorized
+GET {{baseUrl}}/usuarios
 

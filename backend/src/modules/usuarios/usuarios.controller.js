@@ -93,3 +93,49 @@ export async function cambiarEstado(req, res, next) {
     manejarError(error, res, next);
   }
 }
+
+
+// GET /api/usuarios/:id
+export async function obtenerPorId(req, res, next) {
+  try {
+    const usuario = await service.obtenerPorId(
+      req.params.id
+    );
+
+    res.status(200).json(usuario);
+  } catch (error) {
+    manejarError(error, res, next);
+  }
+}
+
+// PUT /api/usuarios/:id
+export async function actualizar(req, res, next) {
+  try {
+    const usuario = await service.actualizar(
+      req.params.id,
+      req.body,
+      req.usuario
+    );
+
+    res.status(200).json({
+      mensaje: 'Usuario actualizado correctamente',
+      usuario
+    });
+  } catch (error) {
+    manejarError(error, res, next);
+  }
+}
+
+// DELETE /api/usuarios/:id
+export async function eliminar(req, res, next) {
+  try {
+    const resultado = await service.eliminar(
+      req.params.id,
+      req.usuario
+    );
+
+    res.status(200).json(resultado);
+  } catch (error) {
+    manejarError(error, res, next);
+  }
+}
