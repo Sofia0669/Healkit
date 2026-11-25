@@ -1,1 +1,248 @@
-<app-module-view [config]="config"></app-module-view>
+<main class="supply-page">
+  <section class="supply-heading">
+    <div>
+      <p class="eyebrow">ABASTECIMIENTO Y BODEGA</p>
+      <h1>Cadena de suministros y proveedores</h1>
+      <p>Administra proveedores, órdenes de compra y recepción de mercadería.</p>
+    </div>
+    <img src="/assets/proveedores-farmacia.jpg" alt="" />
+  </section>
+
+  <section class="supply-stats" aria-label="Resumen de abastecimiento">
+    <article><span>Proveedores activos</span><strong>{{ proveedoresActivos }}</strong></article>
+    <article><span>Órdenes pendientes</span><strong>{{ ordenesPendientes }}</strong></article>
+    <article><span>Por recibir</span><strong>{{ porRecibir }}</strong></article>
+    <article><span>Compras del mes</span><strong>{{ formatoDinero(comprasMes) }}</strong></article>
+  </section>
+
+  <nav class="supply-tabs" aria-label="Secciones de abastecimiento">
+    <button type="button" [class.active]="panel === 'ordenes'" (click)="cambiarPanel('ordenes')">Órdenes de compra</button>
+    <button type="button" [class.active]="panel === 'proveedores'" (click)="cambiarPanel('proveedores')">Proveedores</button>
+    <button type="button" [class.active]="panel === 'historial'" (click)="cambiarPanel('historial')">Historial de precios y entregas</button>
+  </nav>
+
+  @if (error) {
+    <div class="supply-message error-message" role="alert">
+      <span>{{ error }}</span>
+      <button type="button" (click)="error = ''" aria-label="Cerrar error">×</button>
+    </div>
+  }
+  @if (aviso) {
+    <div class="supply-message success-message" role="status">
+      <span>{{ aviso }}</span>
+      <button type="button" (click)="aviso = ''" aria-label="Cerrar aviso">×</button>
+    </div>
+  }
+  @if (cargando) {
+    <p class="loading-message" role="status">Cargando información de abastecimiento...</p>
+  }
+
+  <section class="supply-toolbar">
+    <label class="supply-search">
+      <span aria-hidden="true">⌕</span>
+      <input [(ngModel)]="consulta" [placeholder]="panel === 'proveedores' ? 'Buscar proveedor...' : 'Buscar orden, proveedor o estado...'" aria-label="Buscar" />
+    </label>
+    @if (panel === 'ordenes') {
+      <button class="supply-button primary-button" type="button" (click)="abrirNuevaOrden()">＋ Nueva orden</button>
+    }
+    @if (panel === 'proveedores') {
+      <button class="supply-button primary-button" type="button" (click)="abrirNuevoProveedor()">＋ Nuevo proveedor</button>
+    }
+    @if (panel === 'historial') {
+      <label class="filter-label">Proveedor
+        <select [(ngModel)]="proveedorFiltro" (ngModelChange)="alCambiarFiltroHistorial()">
+          <option [ngValue]="null">Todos</option>
+          @for (proveedor of proveedorCatalogo; track proveedor.id) {
+            <option [ngValue]="proveedor.id">{{ proveedor.nombre }}</option>
+          }
+        </select>
+      </label>
+    }
+  </section>
+
+  @if (panel === 'ordenes') {
+    <section class="supply-card table-card">
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Orden</th><th>Proveedor</th><th>Fecha</th><th>Entrega prevista</th><th>Total</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody>
+            @for (compra of comprasFiltradas; track compra.id_compra) {
+              <tr>
+                <td>OC-{{ compra.id_compra.toString().padStart(4, '0') }}</td>
+                <td>{{ compra.proveedor }}</td>
+                <td>{{ formatoFecha(compra.fecha) }}</td>
+                <td>{{ formatoFecha(compra.fecha_entrega_prevista) }}</td>
+                <td>{{ formatoDinero(compra.total) }}</td>
+                <td><span class="state-pill" [class]=" 'state-pill state-' + compra.estado.toLowerCase() ">{{ estadoTexto(compra.estado) }}</span></td>
+                <td class="action-cell">
+                  <button type="button" class="text-action" (click)="abrirOrden(compra)">Detalle</button>
+                  @if (compra.estado === 'BORRADOR') {
+                    <button type="button" class="text-action" (click)="aprobarOrden(compra)">Aprobar</button>
+                  }
+                </td>
+              </tr>
+            } @empty {
+              <tr><td colspan="7" class="empty-row">No hay órdenes de compra registradas.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
+  @if (panel === 'proveedores') {
+    <section class="supply-card table-card">
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Proveedor</th><th>Identificación</th><th>Contacto</th><th>Teléfono / correo</th><th>Pago</th><th>Entrega</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody>
+            @for (proveedor of proveedoresFiltrados; track proveedor.id_proveedor) {
+              <tr>
+                <td><strong>{{ proveedor.nombre }}</strong><small>{{ proveedor.direccion || 'Sin dirección registrada' }}</small></td>
+                <td>{{ proveedor.identificacion || '—' }}</td>
+                <td>{{ proveedor.contacto || '—' }}</td>
+                <td>{{ proveedor.telefono || '—' }}<small>{{ proveedor.correo || 'Sin correo' }}</small></td>
+                <td>{{ proveedor.condiciones_pago || '—' }}</td>
+                <td>{{ proveedor.plazo_entrega_dias == null ? '—' : proveedor.plazo_entrega_dias + ' días' }}</td>
+                <td><span class="state-pill" [class]="activo(proveedor) ? 'state-pill state-recibida' : 'state-pill state-anulada'">{{ activo(proveedor) ? 'Activo' : 'Inactivo' }}</span></td>
+                <td><button type="button" class="text-action" (click)="editarProveedor(proveedor)">Editar</button></td>
+              </tr>
+            } @empty {
+              <tr><td colspan="8" class="empty-row">No hay proveedores que coincidan con la búsqueda.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
+  @if (panel === 'historial') {
+    <section class="supply-card table-card">
+      <div class="history-intro">
+        <h2>Historial de precios y tiempos de entrega</h2>
+        <p>Promedios calculados a partir de las recepciones y facturas registradas.</p>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Proveedor</th><th>Producto</th><th>Recepciones</th><th>Precio promedio</th><th>Mínimo / máximo</th><th>Último precio</th><th>Entrega promedio</th><th>Última recepción</th></tr></thead>
+          <tbody>
+            @for (registro of historialFiltrado; track registro.id_proveedor + '-' + registro.id_producto) {
+              <tr>
+                <td>{{ registro.proveedor }}</td>
+                <td>{{ registro.producto }}</td>
+                <td>{{ registro.recepciones }}</td>
+                <td>{{ formatoDinero(registro.precio_promedio) }}</td>
+                <td>{{ formatoDinero(registro.precio_minimo) }} / {{ formatoDinero(registro.precio_maximo) }}</td>
+                <td>{{ formatoDinero(registro.ultimo_precio) }}</td>
+                <td>{{ registro.demora_promedio_dias == null ? 'Sin dato' : registro.demora_promedio_dias + ' días' }}</td>
+                <td>{{ formatoFecha(registro.ultima_recepcion) }}</td>
+              </tr>
+            } @empty {
+              <tr><td colspan="8" class="empty-row">El historial aparecerá cuando se registren recepciones.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+</main>
+
+@if (modal === 'proveedor') {
+  <div class="supply-overlay" (click)="modal = null">
+    <section class="supply-modal" role="dialog" aria-modal="true" aria-labelledby="supplier-title" (click)="$event.stopPropagation()">
+      <header><div><p class="eyebrow">DIRECTORIO COMERCIAL</p><h2 id="supplier-title">{{ proveedorEditando ? 'Editar proveedor' : 'Registrar proveedor' }}</h2></div><button type="button" class="close-button" (click)="modal = null" aria-label="Cerrar">×</button></header>
+      <form (ngSubmit)="guardarProveedor()">
+        <div class="form-grid">
+          <label class="full-field">Nombre comercial<input name="nombre" [(ngModel)]="proveedorForm.nombre" required maxlength="150" /></label>
+          <label>Identificación<input name="identificacion" [(ngModel)]="proveedorForm.identificacion" maxlength="30" /></label>
+          <label>Persona de contacto<input name="contacto" [(ngModel)]="proveedorForm.contacto" maxlength="120" /></label>
+          <label>Teléfono<input name="telefono" [(ngModel)]="proveedorForm.telefono" maxlength="30" /></label>
+          <label>Correo electrónico<input name="correo" type="email" [(ngModel)]="proveedorForm.correo" maxlength="150" /></label>
+          <label class="full-field">Dirección<input name="direccion" [(ngModel)]="proveedorForm.direccion" maxlength="255" /></label>
+          <label>Condiciones de pago<input name="condicionesPago" [(ngModel)]="proveedorForm.condicionesPago" placeholder="Ej. Crédito a 30 días" maxlength="180" /></label>
+          <label>Plazo de entrega (días)<input name="plazoEntregaDias" type="number" min="0" max="3650" [(ngModel)]="proveedorForm.plazoEntregaDias" /></label>
+          @if (proveedorEditando) {
+            <label class="checkbox-field"><input name="activo" type="checkbox" [(ngModel)]="proveedorForm.activo" /> Proveedor activo</label>
+          }
+        </div>
+        <footer class="modal-actions"><button type="button" class="supply-button secondary-button" (click)="modal = null">Cancelar</button><button type="submit" class="supply-button primary-button" [disabled]="guardando">{{ guardando ? 'Guardando...' : 'Guardar proveedor' }}</button></footer>
+      </form>
+    </section>
+  </div>
+}
+
+@if (modal === 'orden') {
+  <div class="supply-overlay" (click)="modal = null">
+    <section class="supply-modal large-modal" role="dialog" aria-modal="true" aria-labelledby="order-title" (click)="$event.stopPropagation()">
+      <header><div><p class="eyebrow">ORDEN DE COMPRA</p><h2 id="order-title">Crear orden en borrador</h2></div><button type="button" class="close-button" (click)="modal = null" aria-label="Cerrar">×</button></header>
+      <form (ngSubmit)="guardarOrden()">
+        <div class="form-grid">
+          <label>Proveedor<select name="idProveedor" [(ngModel)]="ordenForm.idProveedor" required><option [ngValue]="null" disabled>Selecciona proveedor</option>@for (proveedor of proveedorCatalogo; track proveedor.id) {<option [ngValue]="proveedor.id">{{ proveedor.nombre }}</option>}</select></label>
+          <label>Entrega prevista<input name="fechaEntregaPrevista" type="date" [(ngModel)]="ordenForm.fechaEntregaPrevista" /></label>
+          <label class="full-field">Observaciones<textarea name="observaciones" [(ngModel)]="ordenForm.observaciones" maxlength="500" rows="2"></textarea></label>
+        </div>
+        <div class="add-item-row">
+          <label>Producto<select name="idProducto" [(ngModel)]="itemForm.idProducto" (ngModelChange)="alCambiarProducto()"><option [ngValue]="null" disabled>Selecciona producto</option>@for (producto of productos; track producto.id) {<option [ngValue]="producto.id">{{ producto.codigo }} · {{ producto.nombre }}</option>}</select></label>
+          <label>Cantidad<input name="cantidad" type="number" min="1" step="1" [(ngModel)]="itemForm.cantidad" /></label>
+          <label>Costo unitario<input name="costoUnitario" type="number" min="0" step="0.01" [(ngModel)]="itemForm.costoUnitario" /></label>
+          <button type="button" class="supply-button secondary-button" (click)="agregarItemOrden()">Agregar</button>
+        </div>
+        <div class="table-scroll compact-table"><table>
+          <thead><tr><th>Producto</th><th>Cantidad</th><th>Costo unitario</th><th>Subtotal</th><th></th></tr></thead>
+          <tbody>@for (item of itemsOrden; track item.idProducto; let i = $index) {<tr><td>{{ nombreProducto(item.idProducto) }}</td><td>{{ item.cantidad }}</td><td>{{ formatoDinero(item.costoUnitario) }}</td><td>{{ formatoDinero(item.cantidad * item.costoUnitario) }}</td><td><button type="button" class="remove-action" (click)="quitarItemOrden(i)">Quitar</button></td></tr>} @empty {<tr><td colspan="5" class="empty-row">Agrega productos para calcular el total.</td></tr>}</tbody>
+        </table></div>
+        <div class="order-total"><span>Total estimado</span><strong>{{ formatoDinero(totalOrden()) }}</strong></div>
+        <footer class="modal-actions"><button type="button" class="supply-button secondary-button" (click)="modal = null">Cancelar</button><button type="submit" class="supply-button primary-button" [disabled]="guardando">{{ guardando ? 'Guardando...' : 'Guardar borrador' }}</button></footer>
+      </form>
+    </section>
+  </div>
+}
+
+@if (modal === 'detalle' && compraSeleccionada) {
+  <div class="supply-overlay" (click)="modal = null">
+    <section class="supply-modal large-modal" role="dialog" aria-modal="true" aria-labelledby="detail-title" (click)="$event.stopPropagation()">
+      <header><div><p class="eyebrow">OC-{{ compraSeleccionada.id_compra.toString().padStart(4, '0') }}</p><h2 id="detail-title">{{ compraSeleccionada.proveedor }}</h2></div><button type="button" class="close-button" (click)="modal = null" aria-label="Cerrar">×</button></header>
+      <div class="detail-summary"><span>Estado <strong>{{ estadoTexto(compraSeleccionada.estado) }}</strong></span><span>Creada <strong>{{ formatoFecha(compraSeleccionada.fecha) }}</strong></span><span>Entrega prevista <strong>{{ formatoFecha(compraSeleccionada.fecha_entrega_prevista) }}</strong></span><span>Total orden <strong>{{ formatoDinero(compraSeleccionada.total) }}</strong></span></div>
+      <h3>Productos solicitados y recibidos</h3>
+      <div class="table-scroll compact-table"><table><thead><tr><th>Producto</th><th>Solicitado</th><th>Recibido</th><th>Pendiente</th><th>Costo orden</th></tr></thead><tbody>@for (item of compraSeleccionada.items; track item.id_detalle_compra) {<tr><td>{{ item.codigo }} · {{ item.producto }}</td><td>{{ item.cantidad_solicitada }}</td><td>{{ item.cantidad_recibida }}</td><td>{{ item.cantidad_solicitada - item.cantidad_recibida }}</td><td>{{ formatoDinero(item.costo_unitario) }}</td></tr>}</tbody></table></div>
+      @if (compraSeleccionada.recepciones.length) {
+        <h3 class="receipt-heading">Facturas y recepciones</h3>
+        @for (recepcion of compraSeleccionada.recepciones; track recepcion.id_recepcion) {
+          <article class="receipt-card">
+            <div><strong>Factura {{ recepcion.numero_factura }}</strong><span>{{ formatoFecha(recepcion.fecha_recepcion) }} · {{ recepcion.recibido_por || 'Usuario no disponible' }}</span></div>
+            <div><span>Total factura</span><strong>{{ formatoDinero(recepcion.total_factura) }}</strong></div>
+            <div><span>Diferencia vs. líneas recibidas</span><strong [class.invoice-difference]="recepcion.diferencia_factura !== 0">{{ formatoDinero(recepcion.diferencia_factura) }}</strong></div>
+            <small>@for (item of recepcion.items; track $index) { {{ item.producto }}: {{ item.cantidad }} · lote {{ item.numero_lote }}; }</small>
+          </article>
+        }
+      }
+      <footer class="modal-actions">
+        <button type="button" class="supply-button secondary-button" (click)="modal = null">Cerrar</button>
+        @if (['SOLICITADA', 'PARCIAL'].includes(compraSeleccionada.estado)) {
+          <button type="button" class="supply-button primary-button" (click)="prepararRecepcion(compraSeleccionada)">Registrar recepción</button>
+        }
+      </footer>
+    </section>
+  </div>
+}
+
+@if (modal === 'recepcion' && compraSeleccionada) {
+  <div class="supply-overlay" (click)="modal = null">
+    <section class="supply-modal large-modal" role="dialog" aria-modal="true" aria-labelledby="receipt-title" (click)="$event.stopPropagation()">
+      <header><div><p class="eyebrow">VALIDACIÓN DE MERCADERÍA</p><h2 id="receipt-title">Registrar recepción de OC-{{ compraSeleccionada.id_compra.toString().padStart(4, '0') }}</h2></div><button type="button" class="close-button" (click)="modal = null" aria-label="Cerrar">×</button></header>
+      <form (ngSubmit)="recibirOrden()">
+        <div class="form-grid">
+          <label>Número de factura interna<input value="Se asignará al registrar" readonly /></label>
+          <label>Total de factura<input name="totalFactura" type="number" min="0" step="0.01" [(ngModel)]="recepcionForm.totalFactura" required /></label>
+        </div>
+        <p class="form-hint">Indica las cantidades realmente entregadas según la factura. Las diferencias quedarán registradas.</p>
+        <div class="table-scroll compact-table receipt-table"><table>
+          <thead><tr><th>Producto / pendiente</th><th>Cantidad recibida</th><th>Costo facturado</th><th>Lote</th><th>Vencimiento</th></tr></thead>
+          <tbody>@for (item of itemsRecepcion; track item.idDetalleCompra) {<tr><td>{{ detalleOrden(item.idDetalleCompra)?.producto }}<small>Faltan {{ (detalleOrden(item.idDetalleCompra)?.cantidad_solicitada ?? 0) - (detalleOrden(item.idDetalleCompra)?.cantidad_recibida ?? 0) }}</small></td><td><input [name]="'qty'+item.idDetalleCompra" type="number" min="0" [max]="(detalleOrden(item.idDetalleCompra)?.cantidad_solicitada ?? 0) - (detalleOrden(item.idDetalleCompra)?.cantidad_recibida ?? 0)" [(ngModel)]="item.cantidad" /></td><td><input [name]="'cost'+item.idDetalleCompra" type="number" min="0" step="0.01" [(ngModel)]="item.costoUnitario" /></td><td><input [name]="'lot'+item.idDetalleCompra" [(ngModel)]="item.numeroLote" maxlength="80" [required]="item.cantidad > 0" /></td><td><input [name]="'expiry'+item.idDetalleCompra" type="date" [(ngModel)]="item.fechaVencimiento" [required]="item.cantidad > 0" /></td></tr>} @empty {<tr><td colspan="5" class="empty-row">No quedan cantidades pendientes por recibir.</td></tr>}</tbody>
+        </table></div>
+        <p class="invoice-check">Suma de líneas: <strong>{{ formatoDinero(totalProductosRecepcion(itemsRecepcion)) }}</strong> · Diferencia factura: <strong>{{ formatoDinero((recepcionForm.totalFactura ?? 0) - totalProductosRecepcion(itemsRecepcion)) }}</strong></p>
+        <footer class="modal-actions"><button type="button" class="supply-button secondary-button" (click)="modal = 'detalle'">Volver al detalle</button><button type="submit" class="supply-button primary-button" [disabled]="guardando">{{ guardando ? 'Registrando...' : 'Validar y registrar' }}</button></footer>
+      </form>
+    </section>
+  </div>
+}
