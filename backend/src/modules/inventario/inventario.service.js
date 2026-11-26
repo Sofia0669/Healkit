@@ -87,3 +87,12 @@ export async function actualizar(id, datos) {
 export async function eliminar(id) {
   return repository.eliminar(id);
 }
+
+
+export async function obtenerCategorias() {
+  return repository.listarCategorias();
+}
+
+export async function obtenerProveedores() {
+  return repository.listarProveedores();
+}

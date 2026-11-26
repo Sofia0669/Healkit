@@ -118,3 +118,30 @@ export async function eliminar(id) {
 
   return resultado.affectedRows > 0;
 }
+
+
+
+export async function listarCategorias() {
+  const [filas] = await pool.query(
+    `SELECT
+       id_categoria AS id,
+       nombre
+     FROM categorias
+     ORDER BY nombre ASC`
+  );
+
+  return filas;
+}
+
+export async function listarProveedores() {
+  const [filas] = await pool.query(
+    `SELECT
+       id_proveedor AS id,
+       nombre
+     FROM proveedores
+     WHERE activo = 1
+     ORDER BY nombre ASC`
+  );
+
+  return filas;
+}

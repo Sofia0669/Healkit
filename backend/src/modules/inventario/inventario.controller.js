@@ -93,3 +93,23 @@ function responderError(error, res, next) {
 
   next(error);
 }
+
+export async function listarCategorias(req, res, next) {
+  try {
+    const categorias = await service.obtenerCategorias();
+
+    return res.json({ categorias });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function listarProveedores(req, res, next) {
+  try {
+    const proveedores = await service.obtenerProveedores();
+
+    return res.json({ proveedores });
+  } catch (error) {
+    next(error);
+  }
+}

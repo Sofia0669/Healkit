@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HkIconComponent} from '../../icons/hk-icon.component';
 import { ModuleConfig } from '../../models/module-config';
-import { EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-module-view',

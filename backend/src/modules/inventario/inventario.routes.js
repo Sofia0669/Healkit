@@ -19,6 +19,20 @@ const GESTORES = [
   ROLES.ENCARGADO
 ];
 
+router.get(
+  '/categorias',
+  autenticar,
+  autorizarRol(...TODOS),
+  controller.listarCategorias
+);
+
+router.get(
+  '/proveedores',
+  autenticar,
+  autorizarRol(...TODOS),
+  controller.listarProveedores
+);
+
 // Los tres roles pueden consultar.
 router.get(
   '/',
@@ -55,5 +69,6 @@ router.delete(
   autorizarRol(...GESTORES),
   controller.eliminar
 );
+
 
 export default router;

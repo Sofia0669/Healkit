@@ -174,3 +174,6 @@ Content-Type: application/json
 
 GET {{baseUrl}}/999999
 Accept: application/json
+###
+GET {{baseUrl}}/categorias
+Accept: application/json

@@ -1,14 +1,448 @@
 
-<p *ngIf="cargando" class="inventario-mensaje">
-  Cargando productos...
-</p>
+<!-- ENCABEZADO ORIGINAL -->
+<section
+  class="module-heading module-hero"
+  style="--banner-image: url('/assets/inventario-farmacia.jpg')">
 
-<div *ngIf="error" class="inventario-error" role="alert">
-  <p>{{ error }}</p>
-  <button type="button" (click)="cargarProductos()">
-    Reintentar
-  </button>
+  <span class="heading-icon">
+    <hk-icon name="package"/>
+  </span>
+
+  <div class="heading-copy">
+    <h1>Inventario</h1>
+    <p>Control de productos y existencias</p>
+  </div>
+</section>
+
+<!-- ESTADÍSTICAS -->
+<section class="stats stats-four">
+
+  <div class="stat-card">
+    <span class="stat-icon">
+      <hk-icon name="package"/>
+    </span>
+    <div>
+      <span class="stat-label">Productos totales</span>
+      <strong>{{ totalProductos }}</strong>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <span class="stat-icon">
+      <hk-icon name="alert"/>
+    </span>
+    <div>
+      <span class="stat-label">Stock bajo</span>
+      <strong>{{ stockBajo }}</strong>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <span class="stat-icon">
+      <hk-icon name="ban"/>
+    </span>
+    <div>
+      <span class="stat-label">Sin existencias</span>
+      <strong>{{ sinExistencias }}</strong>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <span class="stat-icon">
+      <hk-icon name="database"/>
+    </span>
+    <div>
+      <span class="stat-label">Valor del inventario</span>
+      <strong>{{ dinero(valorInventario) }}</strong>
+    </div>
+  </div>
+
+</section>
+
+<!-- BUSCADOR Y ACCIONES -->
+<div class="tools-row">
+
+  <label class="search-field">
+    <hk-icon name="search"/>
+
+    <input
+      type="search"
+      [(ngModel)]="busqueda"
+      placeholder="Buscar por nombre, código o categoría..."
+      aria-label="Buscar productos">
+  </label>
+
+  <select
+    class="inventory-filter"
+    [(ngModel)]="filtro"
+    aria-label="Filtrar por estado">
+
+    <option value="Todos">Todos</option>
+    <option value="Disponible">Disponible</option>
+    <option value="Stock bajo">Stock bajo</option>
+    <option value="Agotado">Agotado</option>
+  </select>
+
+  @if (puedeModificar) {
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="nuevoProducto()">
+
+      <hk-icon name="plus"/>
+      Nuevo producto
+    </button>
+  }
+
 </div>
 
-<app-module-view [config]="config"></app-module-view>
+<!-- MENSAJES -->
+@if (mensaje) {
+  <div class="inventario-exito" role="status">
+    {{ mensaje }}
+    <button type="button" (click)="mensaje = ''">×</button>
+  </div>
+}
 
+@if (error && !mostrarFormulario) {
+  <div class="inventario-error" role="alert">
+    {{ error }}
+
+    <button type="button" (click)="cargarProductos()">
+      Reintentar
+    </button>
+  </div>
+}
+
+<!-- TABLA -->
+<div class="panel table-panel">
+
+  @if (cargando) {
+    <p class="inventario-cargando">
+      Cargando productos...
+    </p>
+  }
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Producto</th>
+          <th>Categoría</th>
+          <th>Precio venta</th>
+          <th>Stock</th>
+          <th>Stock mínimo</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        @for (producto of productosFiltrados; track producto.id) {
+          <tr>
+
+            <td>{{ producto.codigo }}</td>
+
+            <td>
+              <strong class="producto-nombre">
+                {{ producto.nombre }}
+              </strong>
+            </td>
+
+            <td>
+             {{ obtenerNombreCategoria(producto.idCategoria) }}
+            </td>
+
+            <td>
+              {{ dinero(producto.precioVenta) }}
+            </td>
+
+            <td>{{ producto.stockActual }}</td>
+
+            <td>{{ producto.stockMinimo }}</td>
+
+            <td>
+              <span
+                class="estado"
+                [ngClass]="{
+                  'estado-disponible': obtenerEstado(producto) === 'Disponible',
+                  'estado-bajo': obtenerEstado(producto) === 'Stock bajo',
+                  'estado-agotado': obtenerEstado(producto) === 'Agotado'
+                }">
+
+                {{ obtenerEstado(producto) }}
+
+              </span>
+            </td>
+
+            <td class="acciones">
+
+              <button
+                type="button"
+                title="Ver producto"
+                aria-label="Ver producto"
+                (click)="verProducto(producto)">
+                <hk-icon name="eye"/>
+              </button>
+
+              @if (puedeModificar) {
+
+                <button
+                  type="button"
+                  title="Editar producto"
+                  aria-label="Editar producto"
+                  (click)="editarProducto(producto)">
+                  <hk-icon name="edit"/>
+                </button>
+
+                <button
+                  type="button"
+                  title="Desactivar producto"
+                  aria-label="Desactivar producto"
+                  (click)="eliminarProducto(producto)">
+                  <hk-icon name="ban"/>
+                </button>
+
+              }
+
+            </td>
+
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="8" class="no-data">
+              No se encontraron productos.
+            </td>
+          </tr>
+        }
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL: REGISTRAR / EDITAR -->
+@if (mostrarFormulario) {
+  <div class="modal-backdrop" (click)="cerrarFormulario()">
+
+    <section
+      class="modal inventario-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="titulo-formulario"
+      (click)="$event.stopPropagation()">
+
+      <h2 id="titulo-formulario">
+        {{ productoEditando === null
+          ? 'Nuevo producto'
+          : 'Editar producto' }}
+      </h2>
+
+      <p class="modal-subtitle">
+        Completa los datos del producto.
+      </p>
+
+      <form
+        #productoForm="ngForm"
+        (ngSubmit)="guardarProducto()">
+
+        <div class="form-grid">
+
+          <label>
+            Código
+            <input
+              name="codigo"
+              [(ngModel)]="formulario.codigo"
+              maxlength="40"
+              required
+              placeholder="MED001">
+          </label>
+
+          <label>
+            Nombre del producto
+            <input
+              name="nombre"
+              [(ngModel)]="formulario.nombre"
+              maxlength="150"
+              required
+              placeholder="Paracetamol 500 mg">
+          </label>
+
+          <label class="full-width">
+            Descripción
+            <textarea
+              name="descripcion"
+              [(ngModel)]="formulario.descripcion"
+              maxlength="255"
+              rows="2"
+              placeholder="Descripción del producto">
+            </textarea>
+          </label>
+
+          
+<label>
+  Categoría
+  <select
+    name="idCategoria"
+    [(ngModel)]="formulario.idCategoria"
+    required>
+
+    <option [ngValue]="0" disabled>
+      Seleccione una categoría
+    </option>
+
+    @for (categoria of categorias; track categoria.id) {
+      <option [ngValue]="categoria.id">
+        {{ categoria.nombre }}
+      </option>
+    }
+  </select>
+</label>
+
+<label>
+  Proveedor
+  <select
+    name="idProveedor"
+    [(ngModel)]="formulario.idProveedor"
+    required>
+
+    <option [ngValue]="0" disabled>
+      Seleccione un proveedor
+    </option>
+
+    @for (proveedor of proveedores; track proveedor.id) {
+      <option [ngValue]="proveedor.id">
+        {{ proveedor.nombre }}
+      </option>
+    }
+  </select>
+</label>
+          <label>
+            Precio de compra (₡)
+            <input
+              type="number"
+              name="precioCompra"
+              [(ngModel)]="formulario.precioCompra"
+              min="0"
+              step="0.01"
+              required>
+          </label>
+
+          <label>
+            Precio de venta (₡)
+            <input
+              type="number"
+              name="precioVenta"
+              [(ngModel)]="formulario.precioVenta"
+              min="0"
+              step="0.01"
+              required>
+          </label>
+
+          <label>
+            Stock actual
+            <input
+              type="number"
+              name="stockActual"
+              [(ngModel)]="formulario.stockActual"
+              min="0"
+              step="1"
+              required>
+          </label>
+
+          <label>
+            Stock mínimo
+            <input
+              type="number"
+              name="stockMinimo"
+              [(ngModel)]="formulario.stockMinimo"
+              min="0"
+              step="1"
+              required>
+          </label>
+
+          <label class="checkbox-field full-width">
+            <input
+              type="checkbox"
+              name="requiereReceta"
+              [(ngModel)]="formulario.requiereReceta">
+
+            Requiere receta médica
+          </label>
+
+        </div>
+
+        @if (error) {
+          <div class="inventario-error" role="alert">
+            {{ error }}
+          </div>
+        }
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            class="btn btn-outline"
+            [disabled]="guardando"
+            (click)="cerrarFormulario()">
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="guardando || productoForm.invalid">
+
+            {{ guardando ? 'Guardando...' : 'Guardar producto' }}
+
+          </button>
+
+        </div>
+      </form>
+
+    </section>
+  </div>
+}
+
+<!-- MODAL: VER PRODUCTO -->
+@if (productoDetalle) {
+  <div
+    class="modal-backdrop"
+    (click)="productoDetalle = null">
+
+    <section
+      class="modal detalle-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="titulo-detalle"
+      (click)="$event.stopPropagation()">
+
+      <h2 id="titulo-detalle">Detalle del producto</h2>
+
+      <div class="detalle-grid">
+        <p><strong>Código:</strong> {{ productoDetalle.codigo }}</p>
+        <p><strong>Nombre:</strong> {{ productoDetalle.nombre }}</p>
+        <p><strong>Descripción:</strong> {{ productoDetalle.descripcion || '—' }}</p>       
+        <p><strong>Categoría:</strong>{{ obtenerNombreCategoria(productoDetalle.idCategoria) }}</p>
+        <p><strong>Proveedor:</strong>{{ obtenerNombreProveedor(productoDetalle.idProveedor) }}</p>
+        <p><strong>Precio compra:</strong> {{ dinero(productoDetalle.precioCompra) }}</p>
+        <p><strong>Precio venta:</strong> {{ dinero(productoDetalle.precioVenta) }}</p>
+        <p><strong>Stock actual:</strong> {{ productoDetalle.stockActual }}</p>
+        <p><strong>Stock mínimo:</strong> {{ productoDetalle.stockMinimo }}</p>
+        <p><strong>Requiere receta:</strong> {{ productoDetalle.requiereReceta ? 'Sí' : 'No' }}</p>
+      </div>
+
+      <div class="modal-actions">
+        <button
+          class="btn btn-outline"
+          type="button"
+          (click)="productoDetalle = null">
+          Cerrar
+        </button>
+      </div>
+
+    </section>
+  </div>
+}

@@ -1,165 +1,167 @@
 
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
-import { ModuleViewComponent } from
-  '../../shared/components/module-view/module-view.component';
+import { HkIconComponent } from
+  '../../shared/icons/hk-icon.component';
 
-import { ModuleConfig } from
-  '../../shared/models/module-config';
-
-import { INVENTARIO_CONFIG } from './inventario.config';
+import { AuthService } from
+  '../../core/services/auth.service';
 
 import {
   InventarioApiService,
-  Producto
+  Producto,
+  DatosProducto,
+  Categoria,
+  Proveedor
 } from '../../core/services/inventario.api.service';
 
 @Component({
   selector: 'app-inventario',
   standalone: true,
-  imports: [CommonModule, ModuleViewComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    HkIconComponent
+  ],
   templateUrl: './inventario.component.html',
   styleUrl: './inventario.component.css'
 })
 export class InventarioComponent implements OnInit {
 
   private readonly inventarioApi = inject(InventarioApiService);
+  private readonly auth = inject(AuthService);
 
-  config: ModuleConfig = {
-    ...INVENTARIO_CONFIG,
-    stats: INVENTARIO_CONFIG.stats.map(s => ({ ...s })),
-    rows: []
-  };
+  productos: Producto[] = [];
+
+  busqueda = '';
+  filtro = 'Todos';
 
   cargando = false;
+  guardando = false;
+
   error = '';
-  productos: Producto[] = [];
+  mensaje = '';
+
+  mostrarFormulario = false;
+  productoEditando: number | null = null;
+  productoDetalle: Producto | null = null;
+
+  formulario: DatosProducto = this.formularioVacio();
+
+categorias: Categoria[] = [];
+proveedores: Proveedor[] = [];
+
+cargarCategorias(): void {
+  this.inventarioApi.listarCategorias().subscribe({
+    next: categorias => {
+      this.categorias = categorias;
+    },
+    error: () => {
+      this.error = 'No se pudieron cargar las categorías.';
+    }
+  });
+}
+
+cargarProveedores(): void {
+  this.inventarioApi.listarProveedores().subscribe({
+    next: proveedores => {
+      this.proveedores = proveedores;
+    },
+    error: () => {
+      this.error = 'No se pudieron cargar los proveedores.';
+    }
+  });
+}
 
   ngOnInit(): void {
     this.cargarProductos();
+    this.cargarCategorias();
+  this.cargarProveedores();
   }
+
+  // PERMISOS
+
+  get puedeModificar(): boolean {
+    const rol = this.auth.usuarioActual?.rol;
+
+    return rol === 'Administrador General' ||
+      rol === 'Administrador' ||
+      rol === 'Encargado de Farmacia';
+  }
+
+  // CARGAR PRODUCTOS
 
   cargarProductos(): void {
     this.cargando = true;
     this.error = '';
 
     this.inventarioApi.listar().subscribe({
-      next: (productos) => {
-        this.productos = productos;
-        this.actualizarVista(productos);
+      next: productos => {
+        this.productos = productos.filter(p => p.activo);
         this.cargando = false;
       },
-      error: (err) => {
-        this.error =
-          err.error?.mensaje ??
-          err.message ??
-          'No se pudieron cargar los productos.';
-
+      error: err => {
         this.cargando = false;
+        this.error =
+          err.error?.mensaje ||
+          err.message ||
+          'No se pudieron cargar los productos.';
       }
     });
   }
 
-  private actualizarVista(productos: Producto[]): void {
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
+  // ESTADÍSTICAS
 
-    const limite = new Date(hoy);
-    limite.setDate(limite.getDate() + 30);
+  get totalProductos(): number {
+    return this.productos.length;
+  }
 
-    const activos = productos.filter(p => p.activo);
-
-    const stockBajo = activos.filter(
-      p => p.stockActual <= p.stockMinimo
+  get stockBajo(): number {
+    return this.productos.filter(
+      p => p.stockActual > 0 &&
+           p.stockActual <= p.stockMinimo
     ).length;
+  }
 
-    const conFecha = activos.filter(p =>
-      p.vencimiento && this.obtenerFecha(p.vencimiento)
+  get sinExistencias(): number {
+    return this.productos.filter(
+      p => p.stockActual === 0
+    ).length;
+  }
+
+  get valorInventario(): number {
+    return this.productos.reduce(
+      (total, p) => total + p.precioCompra * p.stockActual,
+      0
     );
-
-    const proximos = conFecha.filter(p => {
-      const fecha = this.obtenerFecha(p.vencimiento!);
-      return fecha !== null && fecha >= hoy && fecha <= limite;
-    }).length;
-
-    const vencidos = conFecha.filter(p => {
-      const fecha = this.obtenerFecha(p.vencimiento!);
-      return fecha !== null && fecha < hoy;
-    }).length;
-
-    this.config = {
-      ...this.config,
-
-      stats: [
-        {
-          icon: 'package',
-          label: 'Productos totales',
-          value: String(activos.length)
-        },
-        {
-          icon: 'alert',
-          label: 'Stock bajo',
-          value: String(stockBajo)
-        },
-        {
-          icon: 'calendar',
-          label: 'Próximos a vencer',
-          value: activos.every(p => p.vencimiento) ?
-            String(proximos) : '—'
-        },
-        {
-          icon: 'ban',
-          label: 'Vencidos',
-          value: activos.every(p => p.vencimiento) ?
-            String(vencidos) : '—'
-        }
-      ],
-
-      rows: activos.map(p => [
-        p.codigo,
-        p.nombre,
-        p.categoria,
-        p.presentacion,
-        String(p.stockActual),
-        this.formatearFecha(p.vencimiento),
-        this.obtenerEstado(p, hoy)
-      ])
-    };
   }
 
-  private obtenerFecha(valor: string): Date | null {
-    const fecha = new Date(valor);
+  // BUSCADOR Y FILTRO
 
-    if (Number.isNaN(fecha.getTime())) {
-      return null;
-    }
+  get productosFiltrados(): Producto[] {
+    const texto = this.busqueda.trim().toLowerCase();
 
-    fecha.setHours(0, 0, 0, 0);
-    return fecha;
+    return this.productos.filter(p => {
+      const coincideBusqueda =
+        p.codigo.toLowerCase().includes(texto) ||
+        p.nombre.toLowerCase().includes(texto) ||
+        this.obtenerNombreCategoria(p.idCategoria)
+    .toLowerCase()
+    .includes(texto);
+
+      const coincideFiltro =
+        this.filtro === 'Todos' ||
+        this.obtenerEstado(p) === this.filtro;
+
+      return coincideBusqueda && coincideFiltro;
+    });
   }
 
-  private formatearFecha(valor: string | null): string {
-    if (!valor) {
-      return '—';
-    }
-
-    const fecha = this.obtenerFecha(valor);
-
-    if (!fecha) {
-      return '—';
-    }
-
-    return fecha.toLocaleDateString('es-CR');
-  }
-
-  private obtenerEstado(producto: Producto, hoy: Date): string {
-    const fecha = producto.vencimiento
-      ? this.obtenerFecha(producto.vencimiento)
-      : null;
-
-    if (fecha && fecha < hoy) {
-      return 'Vencido';
+  obtenerEstado(producto: Producto): string {
+    if (producto.stockActual <= 0) {
+      return 'Agotado';
     }
 
     if (producto.stockActual <= producto.stockMinimo) {
@@ -168,4 +170,190 @@ export class InventarioComponent implements OnInit {
 
     return 'Disponible';
   }
+
+  // FORMULARIO
+
+  private formularioVacio(): DatosProducto {
+    return {
+      codigo: '',
+      nombre: '',
+      descripcion: '',
+      idCategoria: 0,
+      idProveedor: 0,
+      precioCompra: 0,
+      precioVenta: 0,
+      stockActual: 0,
+      stockMinimo: 0,
+      requiereReceta: false
+    };
+  }
+
+  nuevoProducto(): void {
+    if (!this.puedeModificar) return;
+
+    this.formulario = this.formularioVacio();
+    this.productoEditando = null;
+
+    this.error = '';
+    this.mensaje = '';
+    this.mostrarFormulario = true;
+  }
+
+  editarProducto(producto: Producto): void {
+    if (!this.puedeModificar) return;
+
+    this.productoEditando = producto.id;
+
+    this.formulario = {
+      codigo: producto.codigo,
+      nombre: producto.nombre,
+      descripcion: producto.descripcion,
+      idCategoria: producto.idCategoria,
+      idProveedor: producto.idProveedor,
+      precioCompra: producto.precioCompra,
+      precioVenta: producto.precioVenta,
+      stockActual: producto.stockActual,
+      stockMinimo: producto.stockMinimo,
+      requiereReceta: producto.requiereReceta
+    };
+
+    this.error = '';
+    this.mensaje = '';
+    this.mostrarFormulario = true;
+  }
+
+  verProducto(producto: Producto): void {
+    this.productoDetalle = producto;
+  }
+
+  cerrarFormulario(): void {
+    if (this.guardando) return;
+
+    this.mostrarFormulario = false;
+    this.productoEditando = null;
+  }
+
+  // GUARDAR EN MYSQL
+
+  guardarProducto(): void {
+    if (!this.puedeModificar || this.guardando) return;
+
+    this.error = '';
+
+    const datos: DatosProducto = {
+      ...this.formulario,
+      codigo: this.formulario.codigo.trim(),
+      nombre: this.formulario.nombre.trim(),
+      descripcion: this.formulario.descripcion.trim()
+    };
+
+    if (!datos.codigo || !datos.nombre) {
+      this.error = 'Debes ingresar el código y nombre del producto.';
+      return;
+    }
+
+    if (
+      !Number.isInteger(datos.idCategoria) ||
+      datos.idCategoria <= 0 ||
+      !Number.isInteger(datos.idProveedor) ||
+      datos.idProveedor <= 0
+    ) {
+      this.error = 'Selecciona una categoría y proveedor válidos.';
+      return;
+    }
+
+    if (
+      !Number.isFinite(datos.precioCompra) ||
+      !Number.isFinite(datos.precioVenta) ||
+      datos.precioCompra < 0 ||
+      datos.precioVenta < 0 ||
+      !Number.isInteger(datos.stockActual) ||
+      !Number.isInteger(datos.stockMinimo) ||
+      datos.stockActual < 0 ||
+      datos.stockMinimo < 0
+    ) {
+      this.error = 'Revisa los precios y las cantidades ingresadas.';
+      return;
+    }
+
+    this.guardando = true;
+
+    const solicitud = this.productoEditando === null
+      ? this.inventarioApi.crear(datos)
+      : this.inventarioApi.actualizar(
+          this.productoEditando,
+          datos
+        );
+
+    solicitud.subscribe({
+      next: () => {
+        this.guardando = false;
+        this.mostrarFormulario = false;
+        this.productoEditando = null;
+
+        this.mensaje = 'Producto guardado correctamente.';
+        this.cargarProductos();
+      },
+      error: err => {
+        this.guardando = false;
+
+        this.error =
+          err.error?.mensaje ||
+          err.error?.error ||
+          'No se pudo guardar el producto en MySQL.';
+      }
+    });
+  }
+
+  // DESACTIVAR PRODUCTO
+
+  eliminarProducto(producto: Producto): void {
+    if (!this.puedeModificar) return;
+
+    const confirmar = confirm(
+      `¿Deseas desactivar el producto "${producto.nombre}"?`
+    );
+
+    if (!confirmar) return;
+
+    this.inventarioApi.eliminar(producto.id).subscribe({
+      next: () => {
+        this.mensaje = 'Producto desactivado correctamente.';
+        this.cargarProductos();
+      },
+      error: err => {
+        this.error =
+          err.error?.mensaje ||
+          'No se pudo desactivar el producto.';
+      }
+    });
+  }
+
+  // FORMATO DE COLONES
+
+  dinero(valor: number): string {
+    return '₡' + new Intl.NumberFormat('es-CR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(valor);
+  }
+
+
+obtenerNombreCategoria(idCategoria: number): string {
+  const categoria = this.categorias.find(
+    c => c.id === idCategoria
+  );
+
+  return categoria?.nombre ?? 'Sin categoría';
 }
+
+obtenerNombreProveedor(idProveedor: number): string {
+  const proveedor = this.proveedores.find(
+    p => p.id === idProveedor
+  );
+
+  return proveedor?.nombre ?? 'Sin proveedor';
+}
+
+}
+
