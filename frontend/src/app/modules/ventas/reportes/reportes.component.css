@@ -10,3 +10,22 @@
 @media (max-width: 1000px) {
   .reportes-grid { grid-template-columns: 1fr; }
 }
+
+/* Ingresos por día: se ven 10 filas y el resto con barra de desplazamiento */
+.ingresos-scroll {
+  max-height: 528px;
+  overflow-y: auto;
+}
+
+.ingresos-scroll th {
+  height: 48px;
+  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.ingresos-scroll td {
+  height: 48px;
+  box-sizing: border-box;
+}

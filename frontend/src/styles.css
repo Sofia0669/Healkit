@@ -220,7 +220,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
   display:flex;
   flex-direction:column;
   padding:20px 16px 28px;
-  min-height:100vh
+  position:sticky;
+  top:0;
+  height:100vh;
+  align-self:start;
+  overflow:hidden
 }
 
 .brand-logo {
@@ -235,7 +239,10 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
 
 .nav {
   display:grid;
-  gap:3px
+  gap:3px;
+  align-content:start;
+  overflow-y:auto;
+  min-height:0
 }
 
 .nav-item {
@@ -265,7 +272,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .sidebar-bottom {
-  margin-top:auto
+  margin-top:auto;
+  flex:0 0 auto
 }
 
 .sidebar-rule {

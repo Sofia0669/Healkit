@@ -1,23 +1,131 @@
 <section class="welcome-row">
-  <div class="welcome-left"><span class="welcome-glyph"><hk-icon name="package"/></span><div><h1>¡Hola, {{nombre}}!</h1><p>Te damos la bienvenida al sistema de gestión de HealKit</p></div></div>
-  <div class="welcome-date"><hk-icon name="calendar"/><span>Hoy: {{hoy | date:'dd/MM/yyyy'}}</span></div>
+  <div class="welcome-left">
+    <span class="welcome-glyph"><hk-icon name="package"/></span>
+    <div>
+      <h1>{{saludo}}, {{nombre}}</h1>
+      <p>{{descripcionRol}}</p>
+    </div>
+  </div>
+  <div class="welcome-date"><hk-icon name="calendar"/><span>{{fechaHoy}}</span></div>
 </section>
-<section class="stats stats-three">
-  @for (t of tarjetas; track t.url) {
-    <a class="stat-card" [routerLink]="t.url"><span class="stat-icon"><hk-icon [name]="t.icono"/></span><div><span class="stat-label">{{t.etiqueta}}</span><strong>{{t.valor}}</strong></div></a>
+
+<section class="db-kpis" aria-label="Indicadores">
+  @for (k of kpis; track k.etiqueta) {
+    <a class="db-kpi" [class.db-kpi-alert]="k.alerta" [routerLink]="k.url">
+      <span class="stat-icon"><hk-icon [name]="k.icono"/></span>
+      <div>
+        <span class="stat-label">{{k.etiqueta}}</span>
+        <strong>{{k.valor}}</strong>
+        @if (k.detalle) { <small>{{k.detalle}}</small> }
+      </div>
+    </a>
   }
 </section>
-<section class="home-banner">
-  <img
-    src="/assets/inicio-banner.jpg"
-    alt="HealKit Pharmacy - Salud y bienestar"
-    class="home-banner-img"
-  />
-</section>
-<section class="mission-section">
-  <h2 class="center-title">Conoce HealKit</h2>
-  <div class="mission-grid">
-    <article class="mission-card"><span class="stat-icon"><hk-icon name="target"/></span><div><h3>Nuestra Misión</h3><p>Brindar a la comunidad de Siquirres acceso a medicamentos y productos de salud de calidad, con atención responsable, confiable y cercana, cumpliendo con la regulación sanitaria vigente.</p></div></article>
-    <article class="mission-card"><span class="stat-icon"><hk-icon name="eye"/></span><div><h3>Nuestra Visión</h3><p>Ser una farmacia de referencia en Siquirres, reconocida por su buen servicio, el control de sus productos y el uso de tecnología para atender mejor a sus clientes.</p></div></article>
+
+<section class="db-actions panel" aria-label="Accesos rápidos">
+  <h2>Accesos rápidos</h2>
+  <div class="db-actions-row">
+    @for (a of acciones; track a.url) {
+      <a class="btn" [class.btn-primary]="a.principal" [class.btn-outline]="!a.principal" [routerLink]="a.url">
+        <hk-icon [name]="a.icono"/>{{a.texto}}
+      </a>
+    }
   </div>
+</section>
+
+<section class="db-grid">
+
+  <article class="panel db-panel">
+    <header class="db-head">
+      <h2>{{esGestor ? 'Ventas de los últimos 7 días' : 'Mis ventas de los últimos 7 días'}}</h2>
+      <strong class="db-total">{{dinero(totalSemana)}}</strong>
+    </header>
+    @if (cargandoVentas) {
+      <p class="db-empty">Cargando ventas…</p>
+    } @else {
+      <div class="db-chart" role="img" aria-label="Gráfico de ventas por día">
+        @for (b of barras; track $index) {
+          <div class="db-col" [class.db-col-hoy]="b.hoy">
+            <span class="db-val">{{b.total > 0 ? dinero(b.total) : ''}}</span>
+            <div class="db-bar" [style.height.%]="b.alto"></div>
+            <span class="db-day">{{b.etiqueta}}</span>
+          </div>
+        }
+      </div>
+    }
+  </article>
+
+  <article class="panel db-panel">
+    <header class="db-head">
+      <h2>Inventario que necesita atención</h2>
+      <a class="db-link" routerLink="/inventario">Ver inventario</a>
+    </header>
+    @if (cargandoInventario) {
+      <p class="db-empty">Cargando inventario…</p>
+    } @else if (enAlerta.length === 0) {
+      <p class="db-empty db-ok">Todo el inventario está por encima del stock mínimo.</p>
+    } @else {
+      <ul class="db-list">
+        @for (p of enAlerta; track p.id) {
+          <li>
+            <div>
+              <strong>{{p.nombre}}</strong>
+              <small>{{p.codigo}} · {{p.stockActual}} de {{p.stockMinimo}} mínimo</small>
+            </div>
+            <span class="db-badge" [class.db-badge-out]="p.stockActual <= 0">{{estadoProducto(p)}}</span>
+          </li>
+        }
+      </ul>
+    }
+  </article>
+
+  <article class="panel db-panel">
+    <header class="db-head">
+      <h2>{{esGestor ? 'Últimas ventas' : 'Mis últimas ventas'}}</h2>
+      <a class="db-link" routerLink="/ventas">Ver todas</a>
+    </header>
+    @if (cargandoVentas) {
+      <p class="db-empty">Cargando ventas…</p>
+    } @else if (ultimas.length === 0) {
+      <p class="db-empty">Todavía no hay ventas registradas.</p>
+    } @else {
+      <ul class="db-list">
+        @for (v of ultimas; track v.id) {
+          <li>
+            <div>
+              <strong>{{v.numeroFactura}}</strong>
+              <small>{{v.fecha | date:'dd/MM/yyyy HH:mm'}} · {{v.cliente ?? 'Sin cliente'}}</small>
+            </div>
+            <div class="db-right">
+              <strong>{{dinero(v.total)}}</strong>
+              <span class="status" [class]="claseEstado(v.estado)">{{v.estado | titlecase}}</span>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </article>
+
+  @if (esGestor) {
+    <article class="panel db-panel">
+      <header class="db-head">
+        <h2>Productos más vendidos (30 días)</h2>
+        <a class="db-link" routerLink="/ventas/reportes">Ver reportes</a>
+      </header>
+      @if (topProductos.length === 0) {
+        <p class="db-empty">Sin ventas en este período.</p>
+      } @else {
+        <ol class="db-rank">
+          @for (t of topProductos; track t.nombre; let i = $index) {
+            <li>
+              <span class="db-pos">{{i + 1}}</span>
+              <span class="db-name">{{t.nombre}}</span>
+              <strong>{{t.unidades}} u.</strong>
+            </li>
+          }
+        </ol>
+      }
+    </article>
+  }
+
 </section>

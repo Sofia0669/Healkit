@@ -1,0 +1,98 @@
+<div class="lp">
+
+  <header class="lp-nav">
+    <img class="lp-logo" src="/assets/logo-menu.png" alt="HealKit Pharmacy"/>
+    <nav class="lp-links" aria-label="Secciones">
+      <button type="button" (click)="ir('modulos')">Módulos</button>
+      <button type="button" (click)="ir('roles')">Roles</button>
+      <button type="button" (click)="ir('nosotros')">Nosotros</button>
+    </nav>
+    <a class="lp-btn lp-btn-light" [routerLink]="haySesion ? '/inicio' : '/login'">
+      <hk-icon [name]="haySesion ? 'home' : 'lock'"/>{{ haySesion ? 'Ir al sistema' : 'Iniciar sesión' }}
+    </a>
+  </header>
+
+  <section class="lp-hero">
+    <div class="lp-hero-text">
+      <span class="lp-tag">Sistema ERP para farmacias</span>
+      <h1>Su farmacia, ordenada de principio a fin</h1>
+      <p>HealKit Pharmacy reúne inventario, ventas, facturación y compras a proveedores en un solo lugar, con reportes claros para decidir mejor.</p>
+      <div class="lp-cta">
+        <a class="lp-btn lp-btn-primary" [routerLink]="haySesion ? '/inicio' : '/login'">
+          {{ haySesion ? 'Abrir mi panel' : 'Ingresar al sistema' }}
+        </a>
+        <button type="button" class="lp-btn lp-btn-ghost" (click)="ir('modulos')">Ver qué incluye</button>
+      </div>
+    </div>
+
+    <div class="lp-hero-art" aria-hidden="true">
+      <div class="lp-chip lp-chip-a"><hk-icon name="alert"/><span>Alertas de stock bajo</span></div>
+      <div class="lp-chip lp-chip-b"><hk-icon name="receipt"/><span>Factura en PDF</span></div>
+      <div class="lp-chip lp-chip-c"><hk-icon name="chart"/><span>Reportes y Power BI</span></div>
+      <div class="lp-orb"><hk-icon name="pill"/></div>
+    </div>
+  </section>
+
+  <section class="lp-section" id="modulos">
+    <h2>Todo lo que la farmacia necesita</h2>
+    <p class="lp-lead">Seis áreas conectadas entre sí: lo que se vende baja del inventario y lo que se recibe de un proveedor lo sube.</p>
+    <div class="lp-grid">
+      @for (m of modulos; track m.titulo) {
+        <article class="lp-card">
+          <span class="lp-icon"><hk-icon [name]="m.icono"/></span>
+          <h3>{{ m.titulo }}</h3>
+          <p>{{ m.texto }}</p>
+        </article>
+      }
+    </div>
+  </section>
+
+  <section class="lp-section lp-alt" id="roles">
+    <h2>Cada rol ve lo que le corresponde</h2>
+    <p class="lp-lead">Al iniciar sesión, el panel y el menú se adaptan a quien entra.</p>
+    <div class="lp-grid lp-grid-3">
+      @for (r of roles; track r.nombre) {
+        <article class="lp-card lp-role">
+          <span class="lp-icon"><hk-icon [name]="r.icono"/></span>
+          <h3>{{ r.nombre }}</h3>
+          <p class="lp-role-sub">{{ r.resumen }}</p>
+          <ul>
+            @for (p of r.puntos; track p) { <li>{{ p }}</li> }
+          </ul>
+        </article>
+      }
+    </div>
+  </section>
+
+  <section class="lp-section" id="nosotros">
+    <h2>Conozca HealKit</h2>
+    <div class="lp-grid lp-grid-2">
+      <article class="lp-card lp-mv">
+        <span class="lp-icon"><hk-icon name="target"/></span>
+        <div>
+          <h3>Nuestra misión</h3>
+          <p>Brindar a la comunidad de Siquirres acceso a medicamentos y productos de salud de calidad, con atención responsable, confiable y cercana, cumpliendo con la regulación sanitaria vigente.</p>
+        </div>
+      </article>
+      <article class="lp-card lp-mv">
+        <span class="lp-icon"><hk-icon name="eye"/></span>
+        <div>
+          <h3>Nuestra visión</h3>
+          <p>Ser una farmacia de referencia en Siquirres, reconocida por su buen servicio, el control de sus productos y el uso de tecnología para atender mejor a sus clientes.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="lp-final">
+    <h2>¿Listo para empezar?</h2>
+    <a class="lp-btn lp-btn-primary" [routerLink]="haySesion ? '/inicio' : '/login'">
+      {{ haySesion ? 'Abrir mi panel' : 'Iniciar sesión' }}
+    </a>
+  </section>
+
+  <footer class="lp-footer">
+    <span>HealKit Pharmacy · Siquirres, Limón</span>
+    <span>Proyecto de Informática Aplicada en los Negocios · UCR · {{ anio }}</span>
+  </footer>
+</div>

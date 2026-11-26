@@ -1,0 +1,119 @@
+/* Landing page pública de HealKit Pharmacy */
+.lp { background: var(--pale); min-height: 100vh; --lp-pad: max(32px, calc((100% - 1160px) / 2)); }
+
+.lp-nav {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  padding: 6px var(--lp-pad);
+  background: linear-gradient(180deg, #06385d, #03294a);
+  color: #fff;
+}
+.lp-logo { height: 46px; width: auto; object-fit: contain; }
+.lp-links { display: flex; gap: 4px; }
+.lp-links button {
+  background: none; border: 0; color: #dcecf6; font: inherit; font-size: 15px;
+  padding: 8px 14px; border-radius: 10px; cursor: pointer;
+}
+.lp-links button:hover { background: #ffffff1a; color: #fff; }
+
+.lp-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 40px; padding: 6px 18px; border-radius: 10px;
+  font: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+  border: 1px solid transparent; text-decoration: none;
+}
+:host ::ng-deep .lp-btn .hk-icon { width: 17px; height: 17px; }
+.lp-btn-primary { background: linear-gradient(100deg, #03b7b6, #078e9f); color: #fff; box-shadow: 0 5px 14px #03b7b640; }
+.lp-btn-primary:hover { filter: brightness(.95); }
+.lp-btn-light { background: #fff; color: var(--navy); }
+.lp-btn-light:hover { background: #e8f4fb; }
+.lp-btn-ghost { background: transparent; color: #fff; border-color: #ffffff66; }
+.lp-btn-ghost:hover { background: #ffffff1a; }
+
+/* Hero */
+.lp-hero {
+  display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 24px; align-items: center;
+  padding: 44px var(--lp-pad) 50px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 85% 20%, #27d4cf55, transparent 45%),
+    linear-gradient(135deg, #06385d 0%, #08507a 55%, #078e9f 100%);
+}
+.lp-tag {
+  display: inline-block; padding: 4px 12px; border-radius: 20px;
+  background: #ffffff1f; border: 1px solid #ffffff3d; font-size: 13px; margin-bottom: 14px;
+}
+.lp-hero h1 { font-size: clamp(26px, 3vw, 40px); line-height: 1.15; margin: 0 0 14px; color: #fff; }
+.lp-hero p { font-size: 17px; line-height: 1.55; max-width: 520px; margin: 0 0 22px; color: #dcecf6; }
+.lp-cta { display: flex; flex-wrap: wrap; gap: 12px; }
+
+.lp-hero-art { position: relative; min-height: 220px; display: grid; place-items: center; }
+.lp-orb {
+  width: 130px; height: 130px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: radial-gradient(circle at 30% 25%, #8ef3e7, #27d4cf 55%, #078e9f);
+  color: #06385d; box-shadow: 0 14px 40px #00000038;
+}
+:host ::ng-deep .lp-orb .hk-icon { width: 64px; height: 64px; }
+.lp-chip {
+  position: absolute; display: flex; align-items: center; gap: 8px;
+  padding: 9px 14px; border-radius: 12px; background: #fff; color: var(--navy);
+  box-shadow: 0 8px 22px #00000028; font-size: 14px; font-weight: 700; white-space: nowrap;
+}
+:host ::ng-deep .lp-chip .hk-icon { width: 19px; height: 19px; color: #0097a6; }
+.lp-chip-a { top: 8%; left: 6%; }
+.lp-chip-b { bottom: 8%; left: 16%; }
+.lp-chip-c { top: 38%; right: 0; }
+
+/* Secciones */
+.lp-section { padding: 48px var(--lp-pad); }
+.lp-alt { background: #fff; border-block: 1px solid var(--border); }
+.lp-section h2 { font-size: clamp(22px, 2.2vw, 30px); margin: 0 0 8px; text-align: center; color: var(--navy); }
+.lp-lead { text-align: center; color: var(--muted); font-size: 16px; margin: 0 auto 28px; max-width: 680px; }
+
+.lp-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.lp-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.lp-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 24px; }
+
+.lp-card {
+  background: #fff; border: 1px solid var(--border); border-radius: 16px;
+  padding: 20px; box-shadow: var(--shadow);
+  transition: transform .15s, box-shadow .15s;
+}
+.lp-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px #06376016; }
+.lp-alt .lp-card { background: var(--pale); }
+.lp-card h3 { margin: 12px 0 6px; font-size: 18px; color: var(--navy); }
+.lp-card p { margin: 0; color: var(--muted); line-height: 1.5; font-size: 15px; }
+
+.lp-icon {
+  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
+  background: var(--mint); color: #0097a6;
+}
+:host ::ng-deep .lp-icon .hk-icon { width: 24px; height: 24px; }
+
+.lp-role-sub { font-weight: 700; color: #0b6b8a !important; margin-bottom: 8px !important; }
+.lp-role ul { margin: 0; padding-left: 18px; color: var(--ink); line-height: 1.7; font-size: 15px; }
+
+.lp-mv { display: flex; gap: 14px; align-items: flex-start; }
+.lp-mv h3 { margin-top: 0; }
+.lp-mv .lp-icon { flex: 0 0 auto; }
+
+.lp-final {
+  text-align: center; padding: 38px 20px 42px;
+  background: linear-gradient(135deg, #06385d, #078e9f); color: #fff;
+}
+.lp-final h2 { color: #fff; margin: 0 0 16px; font-size: clamp(20px, 2vw, 26px); }
+
+.lp-footer {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px;
+  padding: 16px var(--lp-pad); background: #03294a; color: #b7d2e4; font-size: 13px;
+}
+
+@media (max-width: 900px) {
+  .lp { --lp-pad: 18px; }
+  .lp-links { display: none; }
+  .lp-hero { grid-template-columns: 1fr; padding-top: 34px; padding-bottom: 40px; }
+  .lp-hero-art { min-height: 200px; }
+  .lp-section { padding-top: 36px; padding-bottom: 36px; }
+  .lp-grid, .lp-grid-3, .lp-grid-2 { grid-template-columns: 1fr; }
+}

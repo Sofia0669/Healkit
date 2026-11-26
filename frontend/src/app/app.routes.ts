@@ -1,6 +1,7 @@
 
 import { Routes } from '@angular/router';
 
+import { LandingComponent } from './modules/landing/landing.component';
 import { LoginComponent } from './modules/login/login.component';
 import { InicioComponent } from './modules/inicio/inicio.component';
 import { InventarioComponent } from './modules/inventario/inventario.component';
@@ -22,7 +23,7 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'login'
+    component: LandingComponent
   },
   {
     path: 'login',
@@ -86,6 +87,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'login'
+    redirectTo: ''
   }
 ];

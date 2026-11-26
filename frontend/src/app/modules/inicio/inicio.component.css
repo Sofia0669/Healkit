@@ -1,1 +1,72 @@
-/* Ajustes exclusivos del Inicio. La apariencia base está en src/styles.css. */
+/* Panel de inicio según el rol. La apariencia base está en src/styles.css. */
+.db-kpis {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 20px;
+}
+.db-kpi {
+  display: flex; align-items: center; gap: 14px; padding: 18px;
+  background: #fff; border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow);
+  min-width: 0; transition: transform .15s, box-shadow .15s;
+}
+.db-kpi:hover { transform: translateY(-2px); box-shadow: 0 10px 24px #06376016; }
+.db-kpi > div { display: grid; gap: 4px; min-width: 0; }
+.db-kpi strong { font-size: clamp(22px, 1.9vw, 30px); line-height: 1.1; overflow-wrap: anywhere; }
+.db-kpi small { color: var(--muted); font-size: 13px; }
+.db-kpi-alert { border-color: #f3c9a8; }
+.db-kpi-alert .stat-icon { background: #fdebdc; color: #c4620f; }
+.db-kpi-alert strong { color: #b4530a; }
+
+.db-actions { padding: 18px 22px; margin-bottom: 20px; }
+.db-actions h2 { margin: 0 0 12px; font-size: 19px; }
+.db-actions-row { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.db-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.db-panel { padding: 20px 22px; min-width: 0; }
+.db-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.db-head h2 { margin: 0; font-size: 19px; }
+.db-total { color: #007e80; font-size: 18px; white-space: nowrap; }
+.db-link { color: var(--blue); font-size: 14px; white-space: nowrap; }
+.db-link:hover { text-decoration: underline; }
+.db-empty { color: var(--muted); margin: 18px 0 8px; }
+.db-ok { color: #007e80; }
+
+/* Gráfico de barras */
+.db-chart { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; height: 210px; align-items: end; padding-top: 6px; }
+.db-col { display: grid; grid-template-rows: 18px 1fr 22px; height: 100%; align-items: end; justify-items: center; min-width: 0; }
+.db-val { font-size: 11px; color: var(--muted); white-space: nowrap; align-self: end; }
+.db-bar {
+  width: 100%; max-width: 46px; align-self: end; border-radius: 8px 8px 3px 3px;
+  background: linear-gradient(180deg, #27d4cf, #078e9f); min-height: 2px;
+}
+.db-col-hoy .db-bar { background: linear-gradient(180deg, #146b9a, #07345b); }
+.db-day { font-size: 13px; color: var(--muted); text-transform: capitalize; padding-top: 6px; }
+
+/* Listas */
+.db-list { list-style: none; margin: 0; padding: 0; }
+.db-list li {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 11px 0; border-top: 1px solid #e4eef5;
+}
+.db-list li:first-child { border-top: 0; }
+.db-list li > div { display: grid; gap: 3px; min-width: 0; }
+.db-list small { color: var(--muted); font-size: 13px; }
+.db-right { justify-items: end; text-align: right; }
+.db-right .status { min-width: 0; padding: 3px 10px; font-size: 12px; }
+
+.db-badge {
+  padding: 4px 12px; border-radius: 20px; font-size: 13px; white-space: nowrap;
+  background: #fff1d6; color: #9a6200;
+}
+.db-badge-out { background: #fde2e0; color: #b3261e; }
+
+.db-rank { list-style: none; margin: 0; padding: 0; counter-reset: pos; }
+.db-rank li { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid #e4eef5; }
+.db-rank li:first-child { border-top: 0; }
+.db-pos {
+  display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%;
+  background: var(--mint); color: #007e80; font-size: 14px; font-weight: 700; flex: 0 0 auto;
+}
+.db-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+@media (max-width: 1000px) {
+  .db-grid { grid-template-columns: 1fr; }
+}
