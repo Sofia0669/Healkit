@@ -43,7 +43,7 @@ function validarProveedor(datos) {
   }
   const plazo = datos.plazoEntregaDias == null || datos.plazoEntregaDias === ''
     ? null
-    : entero(datos.plazoEntregaDias, 'Plazo de entrega', 0, 3650);
+    : entero(datos.plazoEntregaDias, 'Plazo de entrega', 0, 365);
   const correo = texto(datos.correo, 'Correo', 150);
   if (correo && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
     throw errorValidacion('El correo del proveedor no es válido');
