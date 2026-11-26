@@ -160,7 +160,7 @@
           <label>Correo electrónico<input name="correo" type="email" [(ngModel)]="proveedorForm.correo" maxlength="150" /></label>
           <label class="full-field">Dirección<input name="direccion" [(ngModel)]="proveedorForm.direccion" maxlength="255" /></label>
           <label>Condiciones de pago<input name="condicionesPago" [(ngModel)]="proveedorForm.condicionesPago" placeholder="Ej. Crédito a 30 días" maxlength="180" /></label>
-          <label>Plazo de entrega (días)<input name="plazoEntregaDias" type="number" min="0" max="3650" [(ngModel)]="proveedorForm.plazoEntregaDias" /></label>
+          <label>Plazo de entrega (días)<input name="plazoEntregaDias" type="number" min="0" max="365" [(ngModel)]="proveedorForm.plazoEntregaDias" /></label>
           @if (proveedorEditando) {
             <label class="checkbox-field"><input name="activo" type="checkbox" [(ngModel)]="proveedorForm.activo" /> Proveedor activo</label>
           }
